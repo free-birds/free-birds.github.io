@@ -62,10 +62,12 @@ function setImages() {
 }
 
 function loadImage() {
-    $("img.lazy").lazyload({
-        placeholder : "/static/imgs/empty.jpg",
-        threshold :200
-    });
+    if ($('img').length > 0){
+        $("img.lazy").lazyload({
+            placeholder : "/static/imgs/empty.jpg",
+            threshold :200
+        });
+    }
 }
 
 function init() {

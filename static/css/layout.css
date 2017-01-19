@@ -385,7 +385,16 @@ ul.tags .tags-item {
 .markdown-body blockquote {
     margin: 0
 }
-
+.markdown-body blockquote table tr,
+.markdown-body blockquote table tr td,
+.markdown-body .highlight pre table tr,
+.markdown-body .highlight pre table tr td{
+    border: none;
+    background-color: rgba(0,0,0,0);
+}
+.markdown-body .highlight pre table{
+    margin: 0;
+}
 .markdown-body ol,.markdown-body ul {
     padding: 0;
     list-style: inherit
@@ -1056,7 +1065,7 @@ a,a:visited {
 }
 
 .related h2 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin-top: 0;
     margin-bottom: .65rem
 }
