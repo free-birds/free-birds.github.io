@@ -48,7 +48,7 @@ function debounce(action, delay) {
 }
 
 function setImages() {
-    if ($('img').length > 0){
+    if ($('.content img').length > 0){
         $('img').addClass('lazy');
         var imgArr = $('img'),
             img = '/static/imgs/empty.jpg';
@@ -62,7 +62,7 @@ function setImages() {
 }
 
 function loadImage() {
-    if ($('img').length > 0){
+    if ($('img.lazy').length > 0){
         $("img.lazy").lazyload({
             placeholder : "/static/imgs/empty.jpg",
             threshold :200
