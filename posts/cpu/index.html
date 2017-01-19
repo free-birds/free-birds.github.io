@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title> Check CPU rate in PUREJS - Shmily </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/imgs/favicon/favicon-32x32.png" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+</head>
+<body>
+    <!--[if lt IE 8]>
+<div>
+    <p>
+        已经有超过90%的用户使用更高版本
+        <a target="_blank" title="下载Chrome" href="http://www.google.com/chrome/">Google Chrome</a>
+        或
+        <a target="_blank" href="http://www.microsoft.com/zh-cn/download/ie.aspx?q=internet+explorer">Internet Explorer</a>
+        体验到了更流畅更精彩的页面，你还不试试？
+    </p>
+</div>
+<![endif]-->
+
+<header class="header">
+    <nav class="navbar">
+        <div class="slogan">
+            <a href="/">Shmily</a>
+        </div>
+        <div class="menu">
+            <spam class="menu-icon" id="js-menu-toggle"></spam>
+            <ul class="menu-list">
+                
+                <li class="menu-item">
+                <a href="/home/">
+                <i class="fa "></i>
+                Home</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/posts/">
+                <i class="fa "></i>
+                Posts</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/about/">
+                <i class="fa "></i>
+                About Me</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header>
+
+    <section class="content">
+        <article>
+            <div class="markdown-body">
+  <h1>Check CPU rate in PUREJS</h1>
+  <p class="meta">21 Mar 2014 - Sysu, Guangzhou</p>
+  <p>
+之前在玉伯的Github Issues里看到了使用JS检测CPU使用率的方法，觉得很赞。<br>
+特别自己实现了一下，另外加了一个绘制直方图的功能可以直观看到CPU使用率的情况。<br>
+</p>
+<br>
+<div>
+	<button id='btn' style="display:block;">Start</button>
+	<canvas id='canvas' width='300' height='200' style="background:#000;border:1px solid #fff;"></canvas>
+</div>
+<br><br>
+<strong>实现思想</strong> <br>
+<br>
+其实就是setInterval，利用当前时间减去上一次执行timer记录的时间，得到时间差来反映CPU的延迟，侧面反映了CPU的使用率。
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[],</span><span class="nx">t</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">cpuTimer</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+    <span class="nx">t</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">Data</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span><span class="o">-</span><span class="nx">t</span><span class="p">);</span>
+    <span class="nx">t</span> <span class="o">=</span> <span class="nx">Data</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+<span class="p">},</span><span class="mi">500</span><span class="p">);</span></code></pre></figure>
+理论上得到data应为[500,500,500,500,500...],但实际上CPU肯定会略微延迟,data可能为[501,502,502,501,503...]。如果CPU使用率很高的话,延迟会很大,data就会变为[550,551,552,552,551...]。通过判断data的变化可以初步推断CPU的使用率。
+<br>
+<br>
+<strong>使用直方图直观表示CPU使用率</strong><br>
+<br>
+我们通过绘制data的直方图，可以看到数据的波动情况。当直方图中某一时段数值陡升，证明那一时刻CPU使用率较高。
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">drawHisto</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">cvs</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'canvas'</span><span class="p">);</span>
+        <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">cvs</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">'2d'</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="nx">cvs</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span>
+        <span class="nx">height</span> <span class="o">=</span> <span class="nx">cvs</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
+        <span class="nx">histoWidth</span> <span class="o">=</span> <span class="nx">width</span> <span class="o">/</span> <span class="nx">size</span><span class="p">;</span>
+
+    <span class="c1">// 重绘直方图</span>
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">fillStyle</span> <span class="o">=</span> <span class="s2">"#fff"</span><span class="p">;</span>
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">fillRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="nx">width</span><span class="p">,</span><span class="nx">height</span><span class="p">);</span>
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">beginPath</span><span class="p">();</span>
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">lineWidth</span> <span class="o">=</span> <span class="nx">histoWidth</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+    <span class="nx">ctx</span><span class="p">.</span><span class="nx">strokeStyle</span> <span class="o">=</span> <span class="s1">'#000'</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span> <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">i</span> <span class="o">*</span> <span class="nx">histoWidth</span><span class="p">,</span>
+            <span class="c1">// +5、/20、-10只是为了显示效果,</span>
+            <span class="c1">// ~~为数值取整相当于Math.floor()</span>
+            <span class="nx">y</span> <span class="o">=</span> <span class="o">~~</span><span class="p">(</span> <span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">-</span> <span class="nx">speed</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="mi">20</span> <span class="o">*</span> <span class="p">(</span><span class="nx">height</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span> <span class="p">);</span>
+        <span class="nx">ctx</span><span class="p">.</span><span class="nx">moveTo</span><span class="p">(</span> <span class="nx">x</span><span class="o">+</span><span class="nx">histoWidth</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="nx">height</span> <span class="p">);</span>
+        <span class="nx">ctx</span><span class="p">.</span><span class="nx">lineTo</span><span class="p">(</span> <span class="nx">x</span><span class="o">+</span><span class="nx">histoWidth</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="nx">height</span><span class="o">-</span><span class="nx">y</span> <span class="p">);</span>
+        <span class="nx">ctx</span><span class="p">.</span><span class="nx">stroke</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+<br>
+
+<script>
+(function () {
+	var data = [0,0,0,0,0,0,0,0,0,0],
+		t,size = 10.
+		speed = 500;
+	function runnable(){
+		if( t ){
+			data.shift();
+			data.push(Date.now()-t);
+			drawHisto(data);
+		}
+		t = Date.now();
+		//setTimeout(arguments.callee,speed)
+	};
+	function drawHisto(data){
+		//console.log(data);
+		var cvs = document.getElementById('canvas');
+			ctx = cvs.getContext('2d');
+		var width = cvs.width,
+			height = cvs.height,
+			histoWidth = width / size;
+
+		// 重绘直方图
+		ctx.fillStyle = "#000";
+		ctx.fillRect(0,0,width,height);
+
+		ctx.beginPath();
+		ctx.lineWidth = histoWidth/2;
+		ctx.strokeStyle = '#fff';
+		for( var i = 0, len = data.length; i < len; i++){
+			var x = i*histoWidth,
+				// +5、/20、-10只是为了显示效果
+				y = ~~((data[i] - speed + 5)/20* (height-10));
+			ctx.moveTo(x+histoWidth/2,height);
+			ctx.lineTo(x+histoWidth/2,height-y);
+			ctx.stroke();
+		}
+	}
+
+	var btn = document.getElementById('btn'),
+		cpuTimer = null,
+		isStart = false;
+
+	btn.onclick = function(){
+		if( !isStart ){
+			cpuTimer = setInterval(runnable,speed);
+			this.innerHTML = 'Stop';
+			isStart = true;
+		}else{
+			window.clearInterval(cpuTimer);
+			this.innerHTML = 'Start';
+			isStart = false;
+		}
+	}
+})();
+</script>
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+    <li class="text-ellipsis">
+      <span>09 Dec 2015</span> &raquo; <a href="/posts/router//">Router Middleware For Koa</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>25 Nov 2015</span> &raquo; <a href="/posts/localstorage//">Front-End Engineering：Cache Management</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>23 Nov 2015</span> &raquo; <a href="/posts/yahoo//">Best Practices For Speeding Up Your Web Site</a>
+    </li>
+    
+  </ul>
+</div>
+        </article>
+    </section>
+    <footer class="footer">
+    <div class="copyright">
+        <div class="contact">
+            <p>Copyright @YML</p>
+            <p>Geek of <a href="http://github.com/">GitHub</a></p>
+            <p>aworksmart@gmail.com</p>
+        </div>
+        <div class="contact">
+            <p><a href="http://weibo.com/ihaosir/">weibo.com/ihaosir</a></p>
+            <p><a href="http://github.com/free-birds/">github.com/free-birds</a></p>
+            <p><a href="http://childlike.me/">childlike.me</a></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script src="/static/js/libs/zepto.js"></script>
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/site.js"></script>
+</html>

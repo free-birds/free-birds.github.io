@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title> 深入理解Function类型 - Shmily </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/imgs/favicon/favicon-32x32.png" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+</head>
+<body>
+    <!--[if lt IE 8]>
+<div>
+    <p>
+        已经有超过90%的用户使用更高版本
+        <a target="_blank" title="下载Chrome" href="http://www.google.com/chrome/">Google Chrome</a>
+        或
+        <a target="_blank" href="http://www.microsoft.com/zh-cn/download/ie.aspx?q=internet+explorer">Internet Explorer</a>
+        体验到了更流畅更精彩的页面，你还不试试？
+    </p>
+</div>
+<![endif]-->
+
+<header class="header">
+    <nav class="navbar">
+        <div class="slogan">
+            <a href="/">Shmily</a>
+        </div>
+        <div class="menu">
+            <spam class="menu-icon" id="js-menu-toggle"></spam>
+            <ul class="menu-list">
+                
+                <li class="menu-item">
+                <a href="/home/">
+                <i class="fa "></i>
+                Home</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/posts/">
+                <i class="fa "></i>
+                Posts</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/about/">
+                <i class="fa "></i>
+                About Me</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header>
+
+    <section class="content">
+        <article>
+            <div class="markdown-body">
+  <h1>深入理解Function类型</h1>
+  <p class="meta">04 Mar 2014 - Sysu, Guangzhou</p>
+  <p><strong>1.函数是对象，函数名是指针</strong></p>
+
+<p>　　函数实际上是对象，每个函数都是Function类型的实例，而且都与其他引用类型一样具有属性和方法。由于函数是对象，因此函数名实际上也是一个指向函数对象的指针，不会与某个函数绑定。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">num1</span><span class="p">,</span> <span class="nx">num2</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">num1</span> <span class="o">+</span> <span class="nx">num2</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nx">alert</span><span class="p">(</span><span class="nx">sum</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">));</span> <span class="c1">//20</span>
+
+<span class="kd">var</span> <span class="nx">anotherSum</span> <span class="o">=</span> <span class="nx">sum</span><span class="p">;</span>
+<span class="nx">alert</span><span class="p">(</span><span class="nx">anotherSum</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">));</span> <span class="c1">//20</span>
+
+<span class="nx">sum</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<span class="nx">alert</span><span class="p">(</span><span class="nx">anotherSum</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">));</span> <span class="c1">//20</span></code></pre></figure>
+
+<p>以上代码定义了一个名为sum()函数，又声明了一个anotherSum与sum相等。当将sum设置为null时，因为不带括号是函数指针名不是调用函数，所以只是将函数指针设为null。anotherSum则可以继续调用函数。</p>
+
+<p><br />
+<strong>2.没有重载</strong></p>
+
+<p>　　将函数名想象为指针，就可以理解为什么JavaScript中没有函数重载。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">add</span><span class="p">(</span><span class="nx">num</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">num</span> <span class="o">+</span> <span class="mi">100</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">function</span> <span class="nx">add</span><span class="p">(</span><span class="nx">num</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">num</span> <span class="o">+</span> <span class="mi">200</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">add</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span> <span class="c1">//300</span></code></pre></figure>
+
+<p>以上代码声明了两个同名函数，而结构则是后面的函数覆盖了前面的函数，实际上覆盖了引用第一个函数的变量add。</p>
+
+<p><br />
+<strong>3.函数声明与函数表达式</strong></p>
+
+<p>　　解释器在向执行环境中加载数据时，对函数声明和函数表达式并非一视同仁。解释器会率先读取函数声明，并使其执行任何代码之前可用；至于函数表达式，则必须等到解释器执行到它所在的代码行，才会真正被解释执行。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">alert</span><span class="p">(</span><span class="nx">add</span><span class="p">(</span><span class="mi">100</span><span class="p">));</span>
+<span class="kd">function</span> <span class="nx">add</span><span class="p">(</span><span class="nx">num</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">num</span> <span class="o">+</span> <span class="mi">100</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>以上代码完全可以正常运行。因为代码开始之前，解释器已经通过一个名为函数声明提升的过程，读取并将函数声明添加到执行环境中。如果把上面的函数声明改为函数表达式则会在执行期间导致错误。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">alert</span><span class="p">(</span><span class="nx">add</span><span class="p">(</span><span class="mi">100</span><span class="p">));</span>
+<span class="kd">var</span> <span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">num</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">num</span> <span class="o">+</span> <span class="mi">100</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>在执行期间会导致“unexpected identifier”(意外标识符)的错误。因为在调用时add并未声明。</p>
+
+<p><br />
+<strong>4.函数属性和方法</strong></p>
+
+<p>　　每个函数都包含两个属性：length和prototype。其中length表示参数个数，而prototype则是JavaScript基于原型的面向对象中最重要的一个属性，它保存了类似于父类的对象的属性和方法。
+每个函数也都包含两个非继承而来的方法：apply()和call()。这两个方法的用途都是在特定的作用域中调用函数，实际上等于设置函数体内this对象的值。</p>
+
+<p>　　apply()方法接受两个参数：一个是在其中运行函数的作用域，另一个是参数数组。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">num1</span><span class="p">,</span> <span class="nx">num2</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">num1</span> <span class="o">+</span> <span class="nx">num2</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">function</span> <span class="nx">applySum</span><span class="p">(</span><span class="nx">num1</span><span class="p">,</span> <span class="nx">num2</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">sum</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="nx">arguments</span><span class="p">);</span>
+    <span class="c1">// OR return add.apply(this, [num1,num2]);</span>
+<span class="p">}</span>
+<span class="nx">alert</span><span class="p">(</span><span class="nx">sum</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">));</span> <span class="c1">//20</span>
+<span class="nx">alert</span><span class="p">(</span><span class="nx">applySum</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">));</span> <span class="c1">//20</span></code></pre></figure>
+
+<p>call()方法和apply()方法的作用相同，它们的区别仅在于接受参数的方式不通。对于call()方法，第一个参数与apply()方法一样，而其余参数都是直接传递给函数。换句话说，在使用call()方法时，传递给函数的参数必须逐个列举出来。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">num1</span><span class="p">,</span> <span class="nx">num2</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">num1</span> <span class="o">+</span> <span class="nx">num2</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">function</span> <span class="nx">callSum</span><span class="p">(</span><span class="nx">num1</span><span class="p">,</span> <span class="nx">num2</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">sum</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">num1</span><span class="p">,</span> <span class="nx">num2</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nx">alert</span><span class="p">(</span><span class="nx">callSum</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">));</span> <span class="c1">//20</span></code></pre></figure>
+
+<p>至于使用apply()还是call()，完全取决于你采取哪种给函数传递参数的方式最方便。在不给函数传递参数的情况下，两个方法都一样。</p>
+
+<p>　　事实上，传递参数并非apply()和call()真正的用武之地；<strong>它们真正强大的地方是能够扩充函数赖以运行的作用域。</strong></p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nb">window</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="s2">"red"</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{</span> <span class="na">color</span><span class="p">:</span> <span class="s2">"blue"</span> <span class="p">};</span>
+
+<span class="kd">function</span> <span class="nx">sayColor</span><span class="p">(){</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">color</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">sayColor</span><span class="p">();</span> <span class="c1">//red</span>
+<span class="nx">sayColor</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span> <span class="c1">//red</span>
+<span class="nx">sayColor</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nb">window</span><span class="p">);</span> <span class="c1">//red</span>
+<span class="nx">sayColor</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span> <span class="c1">//blue</span></code></pre></figure>
+
+<p>　　使用call()或者apply()来扩充作用域最大的好处，就是对象不需要与方法有任何耦合关系。当不需要参数情况下，也可以通过bind()来扩充作用域。</p>
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+    <li class="text-ellipsis">
+      <span>09 Dec 2015</span> &raquo; <a href="/posts/router//">Router Middleware For Koa</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>25 Nov 2015</span> &raquo; <a href="/posts/localstorage//">Front-End Engineering：Cache Management</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>23 Nov 2015</span> &raquo; <a href="/posts/yahoo//">Best Practices For Speeding Up Your Web Site</a>
+    </li>
+    
+  </ul>
+</div>
+        </article>
+    </section>
+    <footer class="footer">
+    <div class="copyright">
+        <div class="contact">
+            <p>Copyright @YML</p>
+            <p>Geek of <a href="http://github.com/">GitHub</a></p>
+            <p>aworksmart@gmail.com</p>
+        </div>
+        <div class="contact">
+            <p><a href="http://weibo.com/ihaosir/">weibo.com/ihaosir</a></p>
+            <p><a href="http://github.com/free-birds/">github.com/free-birds</a></p>
+            <p><a href="http://childlike.me/">childlike.me</a></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script src="/static/js/libs/zepto.js"></script>
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/site.js"></script>
+</html>

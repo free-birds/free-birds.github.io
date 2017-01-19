@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title> 1151 魔板 - Shmily </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/imgs/favicon/favicon-32x32.png" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+</head>
+<body>
+    <!--[if lt IE 8]>
+<div>
+    <p>
+        已经有超过90%的用户使用更高版本
+        <a target="_blank" title="下载Chrome" href="http://www.google.com/chrome/">Google Chrome</a>
+        或
+        <a target="_blank" href="http://www.microsoft.com/zh-cn/download/ie.aspx?q=internet+explorer">Internet Explorer</a>
+        体验到了更流畅更精彩的页面，你还不试试？
+    </p>
+</div>
+<![endif]-->
+
+<header class="header">
+    <nav class="navbar">
+        <div class="slogan">
+            <a href="/">Shmily</a>
+        </div>
+        <div class="menu">
+            <spam class="menu-icon" id="js-menu-toggle"></spam>
+            <ul class="menu-list">
+                
+                <li class="menu-item">
+                <a href="/home/">
+                <i class="fa "></i>
+                Home</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/posts/">
+                <i class="fa "></i>
+                Posts</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/about/">
+                <i class="fa "></i>
+                About Me</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header>
+
+    <section class="content">
+        <article>
+            <div class="markdown-body">
+  <h1>1151 魔板</h1>
+  <p class="meta">03 Dec 2013 - Sysu, Guangzhou</p>
+  <p><strong>题目大意</strong>：</p>
+
+<p>类似于华容道的按规则移动方块，达到预期状态。</p>
+
+<p><strong>算法思想及主要数据结构：</strong>：</p>
+
+<p>BFS（广搜）+ 康托展开 + Queue</p>
+
+<p>1、BFS</p>
+
+<p>I．   将初始状态放入队列，</p>
+
+<p>II．  得到队列中的第一个状态，则从队列中pop</p>
+
+<p>III． 得到pop出的状态与目标太进行比较，如果匹配则结束，否则对当前状态继续分别进行A、B、C三种操作，把得到的新状态依次放入队列。</p>
+
+<p>IV．只要队列不为空，重复II操作。</p>
+
+<p>2、康托展开</p>
+
+<p>康托展开是一种特殊的哈希函数,它的使用范围是对于n个数的排列进行状态的压缩和存储,例如要对9的全排列进行判重.没有必要开一个10^9的数组,同时内存也不允许开到那么大的数组.对此，有人提出了优化,即对于一个n的排列数,没有必要开到10^n,因为在一个排列中每个数只出现一次,所以只要前n-1位确定了,前N位就确定了。</p>
+
+<p>但是以上的想法仍不是可行的,因为N可以很大,例如15,所以便引入了康托展开:只需要确定这个排列在总的排列情况中是第几小的就可以了。</p>
+
+<p>例如: {1,2,3,4,…,n}表示1,2,3,…,n的排列如 {1,2,3} 按从小到大排列一共6个。123 132 213 231 312321 。</p>
+
+<p>代表的数字 1 2 3 4 5 6 也就是把10进制数与一个排列对应起来。</p>
+
+<p>他们间的对应关系可由康托展开来找到。</p>
+
+<p>如我想知道321是{1,2,3}中第几个小的数可以这样考虑 ：</p>
+
+<p>第一位是3，当第一位的数小于3时，那排列数小于321 如 123、 213 ，小于3的数有1、2 。所以有2<em>2!个。再看小于第二位2的：小于2的数只有一个就是1 ，所以有1</em>1!=1 所以小于321的{1,2,3}排列数有2<em>2!+1</em>1!=5个。所以321是第6个小的数。 2<em>2!+1</em>1!+0*0!就是康托展开。</p>
+
+<p>再举个例子：1324是{1,2,3,4}排列数中第几个大的数：第一位是1小于1的数没有，是0个 0<em>3! 第二位是3小于3的数有1和2，但1已经在第一位了，所以只有一个数2 1</em>2! 。第三位是2小于2的数是1，但1在第一位，所以有0个数 0<em>1! ，所以比1324小的排列有0</em>3!+1<em>2!+0</em>1!=2个，1324是第三个小数。</p>
+
+<p>3、A、B、C操作的数学方法</p>
+
+<p>A操作（结果存入m，n变量中）</p>
+
+<blockquote>
+  <p>after.x= curr.y;
+after.y= curr.x;</p>
+</blockquote>
+
+<p>B操作</p>
+
+<blockquote>
+  <p>after.x= after.x + curr.x[3]+curr.x[0]+curr.x[1]+curr.x[2];
+after.y= after.y + curr.y[3]+curr.y[0]+curr.y[1]+curr.y[2];</p>
+</blockquote>
+
+<p>C操作：</p>
+
+<blockquote>
+  <p>after.x = after.x +curr.x[0]+curr.y[1]+curr.x[1]+curr.x[3];
+after.y = after.y +curr.y[0]+curr.y[2]+curr.x[2]+curr.y[3];</p>
+</blockquote>
+
+<figure class="highlight"><pre><code class="language-c" data-lang="c"><span class="cp">#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+</span>
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="n">Record</span><span class="p">{</span>
+    <span class="n">string</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">;</span>
+    <span class="n">string</span> <span class="n">op</span><span class="p">;</span>
+<span class="p">}</span><span class="n">start</span><span class="p">,</span><span class="n">target</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">PermSize</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">factory</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span><span class="mi">720</span><span class="p">,</span> <span class="mi">5040</span> <span class="p">};</span> <span class="c1">// 7的阶乘（n-1的阶乘）
+</span><span class="n">bool</span> <span class="n">isVisited</span><span class="p">[</span><span class="mi">50000</span><span class="p">];</span>
+
+<span class="kt">void</span> <span class="n">initial</span><span class="p">(){</span>
+
+    <span class="n">string</span> <span class="n">tmp</span> <span class="o">=</span> <span class="s">""</span><span class="p">;</span>
+
+    <span class="c1">// 初始化初态魔板
+</span>    <span class="n">start</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="s">"1234"</span><span class="p">;</span>
+    <span class="n">start</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="s">"8765"</span><span class="p">;</span>
+    <span class="n">start</span><span class="p">.</span><span class="n">op</span> <span class="o">=</span> <span class="s">""</span><span class="p">;</span>
+
+    <span class="n">target</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="s">""</span><span class="p">;</span>
+    <span class="n">target</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="s">""</span><span class="p">;</span>
+
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+       <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">tmp</span><span class="p">;</span>
+       <span class="n">target</span><span class="p">.</span><span class="n">x</span> <span class="o">+=</span> <span class="n">tmp</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="n">j</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+       <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">tmp</span><span class="p">;</span>
+       <span class="n">target</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="n">tmp</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">memset</span><span class="p">(</span><span class="n">isVisited</span><span class="p">,</span> <span class="nb">false</span> <span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">isVisited</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">cantor</span><span class="p">(</span> <span class="n">string</span> <span class="n">buf</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">counted</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">PermSize</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">counted</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">PermSize</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span> <span class="p">)</span>
+            <span class="k">if</span><span class="p">(</span> <span class="n">buf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">buf</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="p">)</span>
+                <span class="o">++</span><span class="n">counted</span><span class="p">;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="o">+</span> <span class="n">counted</span> <span class="o">*</span> <span class="n">factory</span><span class="p">[</span><span class="n">PermSize</span> <span class="o">-</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">bool</span> <span class="n">isEqual</span><span class="p">(</span><span class="k">const</span> <span class="n">Record</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span><span class="k">const</span> <span class="n">Record</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">){</span>
+    <span class="k">return</span> <span class="p">(</span> <span class="n">A</span><span class="p">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">B</span><span class="p">.</span><span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">A</span><span class="p">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">B</span><span class="p">.</span><span class="n">y</span> <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">Record</span> <span class="n">operate</span><span class="p">(</span><span class="n">Record</span> <span class="n">curr</span><span class="p">,</span> <span class="n">Record</span> <span class="n">after</span><span class="p">,</span><span class="kt">int</span> <span class="n">operation</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">switch</span><span class="p">(</span><span class="n">operation</span><span class="p">){</span>
+        <span class="k">case</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">after</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">curr</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+            <span class="n">after</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">curr</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+            <span class="n">after</span><span class="p">.</span><span class="n">op</span> <span class="o">+=</span> <span class="s">"A"</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">after</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">after</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">curr</span><span class="p">.</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="n">curr</span><span class="p">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">curr</span><span class="p">.</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">curr</span><span class="p">.</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+            <span class="n">after</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">after</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">curr</span><span class="p">.</span><span class="n">y</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="n">curr</span><span class="p">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">curr</span><span class="p">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">curr</span><span class="p">.</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+            <span class="n">after</span><span class="p">.</span><span class="n">op</span> <span class="o">+=</span> <span class="s">"B"</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">after</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">after</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">curr</span><span class="p">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">curr</span><span class="p">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">curr</span><span class="p">.</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">curr</span><span class="p">.</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+            <span class="n">after</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">after</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">curr</span><span class="p">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">curr</span><span class="p">.</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">curr</span><span class="p">.</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">curr</span><span class="p">.</span><span class="n">y</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+            <span class="n">after</span><span class="p">.</span><span class="n">op</span> <span class="o">+=</span> <span class="s">"C"</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">after</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 广搜
+</span><span class="kt">void</span> <span class="n">bfs</span><span class="p">(</span> <span class="kt">int</span> <span class="n">m</span> <span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">isEqual</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">target</span><span class="p">)</span> <span class="p">){</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">queue</span><span class="o">&lt;</span><span class="n">Record</span><span class="o">&gt;</span> <span class="n">records</span><span class="p">;</span>
+    <span class="n">records</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">start</span><span class="p">);</span>
+
+    <span class="c1">// 队列不为空
+</span>    <span class="k">while</span><span class="p">(</span> <span class="o">!</span><span class="n">records</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="p">){</span>
+        <span class="n">Record</span> <span class="n">curr</span> <span class="o">=</span> <span class="n">records</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+        <span class="n">records</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+
+        <span class="c1">// 如果操作次数大于要求次数则返回-1
+</span>        <span class="k">if</span><span class="p">(</span> <span class="n">curr</span><span class="p">.</span><span class="n">op</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">m</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">// 当前态与目标太匹配则返回
+</span>        <span class="k">if</span><span class="p">(</span> <span class="n">isEqual</span><span class="p">(</span><span class="n">curr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> <span class="p">){</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">curr</span><span class="p">.</span><span class="n">op</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span> <span class="o">&lt;&lt;</span> <span class="n">curr</span><span class="p">.</span><span class="n">op</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">// 循环进行A,B,C操作
+</span>        <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">){</span>
+            <span class="n">Record</span> <span class="n">after</span><span class="p">;</span>
+            <span class="n">after</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="s">""</span><span class="p">;</span>
+            <span class="n">after</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span><span class="s">""</span><span class="p">;</span>
+            <span class="n">after</span><span class="p">.</span><span class="n">op</span> <span class="o">=</span> <span class="n">curr</span><span class="p">.</span><span class="n">op</span><span class="p">;</span>
+
+            <span class="n">after</span> <span class="o">=</span> <span class="n">operate</span><span class="p">(</span><span class="n">curr</span><span class="p">,</span><span class="n">after</span><span class="p">,</span><span class="n">i</span><span class="p">);</span>
+
+            <span class="kt">int</span> <span class="n">cn</span> <span class="o">=</span> <span class="n">cantor</span><span class="p">(</span> <span class="n">after</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">after</span><span class="p">.</span><span class="n">y</span> <span class="p">);</span>
+            <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="n">isVisited</span><span class="p">[</span> <span class="n">cn</span> <span class="p">]){</span>
+                <span class="n">isVisited</span><span class="p">[</span> <span class="n">cn</span> <span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+                <span class="n">records</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">after</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">(){</span>
+
+    <span class="kt">int</span> <span class="n">m</span><span class="p">;</span>
+
+    <span class="k">while</span><span class="p">(</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">m</span> <span class="o">&amp;&amp;</span> <span class="n">m</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">){</span>
+        <span class="n">initial</span><span class="p">();</span>
+        <span class="n">bfs</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+    <li class="text-ellipsis">
+      <span>09 Dec 2015</span> &raquo; <a href="/posts/router//">Router Middleware For Koa</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>25 Nov 2015</span> &raquo; <a href="/posts/localstorage//">Front-End Engineering：Cache Management</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>23 Nov 2015</span> &raquo; <a href="/posts/yahoo//">Best Practices For Speeding Up Your Web Site</a>
+    </li>
+    
+  </ul>
+</div>
+        </article>
+    </section>
+    <footer class="footer">
+    <div class="copyright">
+        <div class="contact">
+            <p>Copyright @YML</p>
+            <p>Geek of <a href="http://github.com/">GitHub</a></p>
+            <p>aworksmart@gmail.com</p>
+        </div>
+        <div class="contact">
+            <p><a href="http://weibo.com/ihaosir/">weibo.com/ihaosir</a></p>
+            <p><a href="http://github.com/free-birds/">github.com/free-birds</a></p>
+            <p><a href="http://childlike.me/">childlike.me</a></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script src="/static/js/libs/zepto.js"></script>
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/site.js"></script>
+</html>

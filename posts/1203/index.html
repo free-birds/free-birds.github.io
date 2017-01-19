@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title> 1203 The Cubic End(数论乘法) - Shmily </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/imgs/favicon/favicon-32x32.png" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+</head>
+<body>
+    <!--[if lt IE 8]>
+<div>
+    <p>
+        已经有超过90%的用户使用更高版本
+        <a target="_blank" title="下载Chrome" href="http://www.google.com/chrome/">Google Chrome</a>
+        或
+        <a target="_blank" href="http://www.microsoft.com/zh-cn/download/ie.aspx?q=internet+explorer">Internet Explorer</a>
+        体验到了更流畅更精彩的页面，你还不试试？
+    </p>
+</div>
+<![endif]-->
+
+<header class="header">
+    <nav class="navbar">
+        <div class="slogan">
+            <a href="/">Shmily</a>
+        </div>
+        <div class="menu">
+            <spam class="menu-icon" id="js-menu-toggle"></spam>
+            <ul class="menu-list">
+                
+                <li class="menu-item">
+                <a href="/home/">
+                <i class="fa "></i>
+                Home</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/posts/">
+                <i class="fa "></i>
+                Posts</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/about/">
+                <i class="fa "></i>
+                About Me</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header>
+
+    <section class="content">
+        <article>
+            <div class="markdown-body">
+  <h1>1203 The Cubic End(数论乘法)</h1>
+  <p class="meta">12 Dec 2013 - Sysu, Guangzhou</p>
+  <p><strong>题目大意</strong>：</p>
+
+<p>立方求尾数。求一个数的立方尾数等于本身。</p>
+
+<p><strong>解题思路</strong>：</p>
+
+<p>1.判断尾数相同，不需要将整个数乘完再取尾数。只要从低位开始，一位一位逐个匹配即可。</p>
+
+<p>2.尾数为1，3，7，9时，1立方尾数为1，3立方尾数为7，7立方尾数为3，9立方尾数为9。</p>
+
+<p>所以，最后一位只有相应4种可能。</p>
+
+<p>3.取尾数操作即求模，取最后一位即模10，最后两位模10^2。</p>
+
+<p>4.在立方取模时运用到数论乘法求模。</p>
+
+<blockquote>
+  <p>a^3 % m = (((a * a) % m) * a) % m</p>
+</blockquote>
+
+<p>因为a小于m,所以先进行a^2再求模。利用公式减小数值范围。</p>
+
+<p>5.但在大于等于10位时，long long也会溢出。所以运用到数论中的乘法求模，在乘法过程中不断求模。</p>
+
+<p>相关介绍：<a href="http://en.wikipedia.org/wiki/Multiplication_algorithm#Fast_multiplication_algorithms_for_large_inputs">点击打开链接</a></p>
+
+<figure class="highlight"><pre><code class="language-c" data-lang="c"><span class="c1">// 1203. The Cubic End(快速乘法)
+</span><span class="cp">#include &lt;cstdio&gt;
+#include &lt;cmath&gt;
+#include &lt;cstring&gt;
+</span>
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">long</span> <span class="kt">long</span> <span class="nf">mul</span><span class="p">(</span><span class="kt">long</span> <span class="kt">long</span> <span class="n">a</span><span class="p">,</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">b</span><span class="p">,</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">mod</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">const</span> <span class="kt">int</span> <span class="n">base</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(;</span> <span class="n">b</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">b</span> <span class="o">/=</span> <span class="n">base</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">c</span> <span class="o">+=</span> <span class="p">(</span><span class="n">b</span> <span class="o">%</span> <span class="n">base</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span><span class="p">;</span>
+        <span class="n">c</span> <span class="o">%=</span> <span class="n">mod</span><span class="p">;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">base</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">long</span> <span class="kt">long</span> <span class="n">cube</span><span class="p">(</span><span class="kt">long</span> <span class="kt">long</span> <span class="n">x</span><span class="p">,</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">mod</span><span class="p">){</span>
+    <span class="k">return</span> <span class="n">mul</span><span class="p">(</span><span class="n">mul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">mod</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">mod</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//freopen("D:\\input.txt","r",stdin);
+</span>    <span class="kt">int</span> <span class="n">t</span><span class="p">,</span> <span class="n">length</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">result</span><span class="p">,</span> <span class="n">remain</span><span class="p">,</span> <span class="n">power</span><span class="p">,</span> <span class="n">step</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">str</span><span class="p">[</span><span class="mi">11</span><span class="p">];</span>
+
+    <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">t</span><span class="p">);</span>
+    <span class="k">while</span><span class="p">(</span> <span class="n">t</span><span class="o">--</span> <span class="p">){</span>
+        <span class="n">scanf</span><span class="p">(</span><span class="s">"%s"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">str</span><span class="p">);</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">remain</span> <span class="o">=</span> <span class="n">str</span><span class="p">[</span><span class="n">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="sc">'0'</span><span class="p">;</span>
+        <span class="n">power</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+
+        <span class="k">if</span><span class="p">(</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">3</span> <span class="p">)</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">7</span> <span class="p">)</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+        <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">length</span> <span class="o">-</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="n">i</span> <span class="p">){</span>
+            <span class="n">remain</span> <span class="o">+=</span> <span class="p">(</span><span class="n">str</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">'0'</span><span class="p">)</span> <span class="o">*</span> <span class="n">power</span><span class="p">;</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="n">power</span><span class="p">;</span>
+            <span class="n">power</span> <span class="o">*=</span> <span class="mi">10</span><span class="p">;</span>
+            <span class="k">while</span><span class="p">(</span> <span class="n">cube</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="n">power</span><span class="p">)</span> <span class="o">!=</span> <span class="n">remain</span> <span class="p">){</span>
+                <span class="n">result</span> <span class="o">+=</span> <span class="n">step</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%lld</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="n">result</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+    <li class="text-ellipsis">
+      <span>09 Dec 2015</span> &raquo; <a href="/posts/router//">Router Middleware For Koa</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>25 Nov 2015</span> &raquo; <a href="/posts/localstorage//">Front-End Engineering：Cache Management</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>23 Nov 2015</span> &raquo; <a href="/posts/yahoo//">Best Practices For Speeding Up Your Web Site</a>
+    </li>
+    
+  </ul>
+</div>
+        </article>
+    </section>
+    <footer class="footer">
+    <div class="copyright">
+        <div class="contact">
+            <p>Copyright @YML</p>
+            <p>Geek of <a href="http://github.com/">GitHub</a></p>
+            <p>aworksmart@gmail.com</p>
+        </div>
+        <div class="contact">
+            <p><a href="http://weibo.com/ihaosir/">weibo.com/ihaosir</a></p>
+            <p><a href="http://github.com/free-birds/">github.com/free-birds</a></p>
+            <p><a href="http://childlike.me/">childlike.me</a></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script src="/static/js/libs/zepto.js"></script>
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/site.js"></script>
+</html>

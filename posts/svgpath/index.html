@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title> Draw a Moving Line - Shmily </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/imgs/favicon/favicon-32x32.png" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+</head>
+<body>
+    <!--[if lt IE 8]>
+<div>
+    <p>
+        已经有超过90%的用户使用更高版本
+        <a target="_blank" title="下载Chrome" href="http://www.google.com/chrome/">Google Chrome</a>
+        或
+        <a target="_blank" href="http://www.microsoft.com/zh-cn/download/ie.aspx?q=internet+explorer">Internet Explorer</a>
+        体验到了更流畅更精彩的页面，你还不试试？
+    </p>
+</div>
+<![endif]-->
+
+<header class="header">
+    <nav class="navbar">
+        <div class="slogan">
+            <a href="/">Shmily</a>
+        </div>
+        <div class="menu">
+            <spam class="menu-icon" id="js-menu-toggle"></spam>
+            <ul class="menu-list">
+                
+                <li class="menu-item">
+                <a href="/home/">
+                <i class="fa "></i>
+                Home</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/posts/">
+                <i class="fa "></i>
+                Posts</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/about/">
+                <i class="fa "></i>
+                About Me</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header>
+
+    <section class="content">
+        <article>
+            <div class="markdown-body">
+  <h1>Draw a Moving Line</h1>
+  <p class="meta">25 Feb 2014 - Sysu, Guangzhou</p>
+  <strong>原文链接：</strong> <a href="http://www.webhek.com/animated-line-drawing-in-svg/">[传送门]</a><br>
+<br>
+<div class="containner">
+	<svg height="30%" width="100%" onclick="RunLine();">
+		<path d="M43 74
+		C43 74 41 74 41 74
+		C41 79 43 74 46 84
+		C54 84 61 79 61 74
+		C61 62 54 54 46 54
+		C32 54 21 62 21 74
+		C21 90 32 104 46 104
+		C65 104 81 90 81 74
+		C81 51 65 34 46 34
+		C21 34 1 51 1 74
+		C1 101 21 124 46 124
+		C76 124 101 101 101 74
+		C101 40 76 14 46 14"
+		style="fill:none;stroke:white;stroke-width:2"/>
+	</svg>
+</div>
+<br>
+
+SVG里用来定义路径的格式堪比正则表达式的怪异：<br><br>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;path</span> <span class="na">d=</span><span class="s">"M43 74
+	C43 74 41 74 41 74
+	C41 79 43 74 46 84
+	C54 84 61 79 61 74
+	C61 62 54 54 46 54
+	C32 54 21 62 21 74
+	C21 90 32 104 46 104
+	C65 104 81 90 81 74
+	C81 51 65 34 46 34
+	C21 34 1 51 1 74
+	C1 101 21 124 46 124
+	C76 124 101 101 101 74
+	C101 40 76 14 46 14"</span>
+	<span class="na">style=</span><span class="s">"fill:black;stroke:white;stroke-width:2"</span><span class="nt">/&gt;</span></code></pre></figure>
+<br>
+属性d里的每一部分都是告诉浏览器生成一个动作，比如移动到某一个点，开始画一条线，画一个贝齐尔弧线，等等。<br>
+<br>
+　　关于这些数据是如何变成动画，变成一条慢慢画出的线，这是个非常复杂的问题，幸运的是，我们不用考虑这些。我可以使用颜色和设置点的宽度，让SVG路径变成一段一段的点线，并控制点的偏移量：<br>
+<br>
+　　属性stroke-dasharray是让你指定画出的线段每段的长度，第二个值是各段之间空隙的长度。属性stroke-dashoffset是让你指定每个小段的起始偏移量。将线段长度与线段间隔设置为路径长度，通过改变线段起始偏移量可以则可以使线段动起来。<br>
+<br>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">RunLine</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.containner path'</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">getTotalLength</span><span class="p">();</span>
+
+    <span class="c1">// 清除之前的动作</span>
+    <span class="nx">path</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">transition</span> <span class="o">=</span> <span class="s1">'none'</span><span class="p">;</span>
+
+    <span class="c1">// 设置起始点</span>
+    <span class="nx">path</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">strokeDasharray</span> <span class="o">=</span> <span class="nx">length</span> <span class="o">+</span> <span class="s1">' '</span> <span class="o">+</span> <span class="nx">length</span><span class="p">;</span>
+    <span class="nx">path</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">strokeDashoffset</span> <span class="o">=</span> <span class="nx">length</span><span class="p">;</span>
+
+    <span class="c1">// 获取区域及相关样式，让浏览器寻找起点</span>
+    <span class="nx">path</span><span class="p">.</span><span class="nx">getBoundingClientRect</span><span class="p">();</span>
+
+    <span class="c1">// 定义动作</span>
+    <span class="nx">path</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">transition</span> <span class="o">=</span> <span class="s1">'stroke-dashoffset 2s ease-in-out'</span><span class="p">;</span>
+    <span class="c1">// Go!</span>
+    <span class="nx">path</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">strokeDashoffset</span> <span class="o">=</span> <span class="s1">'0'</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+
+<script>
+	function RunLine () {
+		var path = document.querySelector('.containner path');
+		var length = path.getTotalLength();
+
+		// 清除之前的动作
+		path.style.transition = path.style.WebkitTransition = 'none';
+
+		// 设置起始点
+		path.style.strokeDasharray = length + ' ' + length;
+		path.style.strokeDashoffset = length;
+
+		// 获取区域及相关样式，让浏览器寻找起点
+		path.getBoundingClientRect();
+
+		// 定义动作
+		path.style.transition = path.style.WebkitTransition = 'stroke-dashoffset 2s ease-in-out';
+		// Go!
+		path.style.strokeDashoffset = '0';
+	}
+	window.onload = RunLine;
+</script>
+
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+    <li class="text-ellipsis">
+      <span>09 Dec 2015</span> &raquo; <a href="/posts/router//">Router Middleware For Koa</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>25 Nov 2015</span> &raquo; <a href="/posts/localstorage//">Front-End Engineering：Cache Management</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>23 Nov 2015</span> &raquo; <a href="/posts/yahoo//">Best Practices For Speeding Up Your Web Site</a>
+    </li>
+    
+  </ul>
+</div>
+        </article>
+    </section>
+    <footer class="footer">
+    <div class="copyright">
+        <div class="contact">
+            <p>Copyright @YML</p>
+            <p>Geek of <a href="http://github.com/">GitHub</a></p>
+            <p>aworksmart@gmail.com</p>
+        </div>
+        <div class="contact">
+            <p><a href="http://weibo.com/ihaosir/">weibo.com/ihaosir</a></p>
+            <p><a href="http://github.com/free-birds/">github.com/free-birds</a></p>
+            <p><a href="http://childlike.me/">childlike.me</a></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script src="/static/js/libs/zepto.js"></script>
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/site.js"></script>
+</html>

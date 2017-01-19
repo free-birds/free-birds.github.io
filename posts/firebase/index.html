@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title> Firebase Realtime Database - Shmily </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/imgs/favicon/favicon-32x32.png" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+</head>
+<body>
+    <!--[if lt IE 8]>
+<div>
+    <p>
+        已经有超过90%的用户使用更高版本
+        <a target="_blank" title="下载Chrome" href="http://www.google.com/chrome/">Google Chrome</a>
+        或
+        <a target="_blank" href="http://www.microsoft.com/zh-cn/download/ie.aspx?q=internet+explorer">Internet Explorer</a>
+        体验到了更流畅更精彩的页面，你还不试试？
+    </p>
+</div>
+<![endif]-->
+
+<header class="header">
+    <nav class="navbar">
+        <div class="slogan">
+            <a href="/">Shmily</a>
+        </div>
+        <div class="menu">
+            <spam class="menu-icon" id="js-menu-toggle"></spam>
+            <ul class="menu-list">
+                
+                <li class="menu-item">
+                <a href="/home/">
+                <i class="fa "></i>
+                Home</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/posts/">
+                <i class="fa "></i>
+                Posts</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/about/">
+                <i class="fa "></i>
+                About Me</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header>
+
+    <section class="content">
+        <article>
+            <div class="markdown-body">
+  <h1>Firebase Realtime Database</h1>
+  <p class="meta">08 Oct 2015 - Meituan, Beijing</p>
+  <p>For a long time, as a FE, all my projects are based on github page, which doesn’t power backend. I had to host a extra <a href="http://market.aliyun.com/products/55528001/jxsc000031.html?spm=5176.900004.4.2.NbHfQP">VPS</a> for supporting my site, especially data storage util I find that the <a href="https://www.firebase.com/features.html">Firebase</a> is a good choice.</p>
+
+<!--more-->
+
+<p>Firebase can power app’s backend, including data storage, user authentication, static hosting, and more, which help us improve extraordinary user experiences.</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>Data in your Firebase database is stored as JSON and synchronized in realtime to every connected client. When you build cross-platform apps with our <a href="https://www.firebase.com/docs/android/">Android</a>, <a href="https://www.firebase.com/docs/ios/">iOS</a>, and <a href="https://www.firebase.com/docs/web/">JavaScript</a> SDKs, all of your clients share one Firebase database and automatically receive updates with the newest data.</p>
+
+<h2 id="install">Install</h2>
+
+<p>You’ll need to include the Firebase JavaScript client library in your website. Simply add a script tag to the <code class="highlighter-rouge">&lt;head&gt;</code> section of your HTML file and recommend including the library directly from our CDN:</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://cdn.firebase.com/js/client/2.3.1/firebase.js"</span><span class="nt">&gt;&lt;/script&gt;</span></code></pre></figure>
+
+<p>Alternatively, if you prefer to install Firebase as a local application dependency, you can use Bower:</p>
+
+<blockquote>
+  <p>bower install firebase</p>
+</blockquote>
+
+<p>The Firebase JavaScript API and the Firebase Node.js API are exactly the same. Firebase clients run just as easily on your servers as they do on end-user devices. We offer a Node.js module which can be installed via npm from the command line:</p>
+
+<blockquote>
+  <p>npm install firebase –save</p>
+</blockquote>
+
+<p>To use the Firebase Node.js module in your application, just require the Firebase client library.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">Firebase</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"firebase"</span><span class="p">);</span></code></pre></figure>
+
+<h2 id="usage">Usage</h2>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// Create a connection to your Firebase database</span>
+<span class="kd">var</span> <span class="nx">ref</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Firebase</span><span class="p">(</span><span class="s2">"https://&lt;YOUR-FIREBASE-APP&gt;.firebaseio.com"</span><span class="p">);</span>
+
+<span class="c1">// Save data</span>
+<span class="nx">ref</span><span class="p">.</span><span class="nx">set</span><span class="p">({</span> <span class="na">name</span><span class="p">:</span> <span class="s2">"有田十三"</span> <span class="p">});</span>
+
+<span class="c1">// Listen for realtime changes</span>
+<span class="nx">ref</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">"value"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">val</span><span class="p">().</span><span class="nx">name</span><span class="p">;</span>
+  <span class="nx">alert</span><span class="p">(</span><span class="s2">"My name is "</span> <span class="o">+</span> <span class="nx">name</span><span class="p">);</span>
+<span class="p">});</span></code></pre></figure>
+
+<p>Now, I can manage data online without DBMS like below:
+<img src="/static/img/firebase.png" alt="img" /></p>
+
+<p>Nice cool, right?</p>
+
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+    <li class="text-ellipsis">
+      <span>09 Dec 2015</span> &raquo; <a href="/posts/router//">Router Middleware For Koa</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>25 Nov 2015</span> &raquo; <a href="/posts/localstorage//">Front-End Engineering：Cache Management</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>23 Nov 2015</span> &raquo; <a href="/posts/yahoo//">Best Practices For Speeding Up Your Web Site</a>
+    </li>
+    
+  </ul>
+</div>
+        </article>
+    </section>
+    <footer class="footer">
+    <div class="copyright">
+        <div class="contact">
+            <p>Copyright @YML</p>
+            <p>Geek of <a href="http://github.com/">GitHub</a></p>
+            <p>aworksmart@gmail.com</p>
+        </div>
+        <div class="contact">
+            <p><a href="http://weibo.com/ihaosir/">weibo.com/ihaosir</a></p>
+            <p><a href="http://github.com/free-birds/">github.com/free-birds</a></p>
+            <p><a href="http://childlike.me/">childlike.me</a></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script src="/static/js/libs/zepto.js"></script>
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/site.js"></script>
+</html>

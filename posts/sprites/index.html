@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title> Generating CSS sprites with Gulp - Shmily </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/imgs/favicon/favicon-32x32.png" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+</head>
+<body>
+    <!--[if lt IE 8]>
+<div>
+    <p>
+        已经有超过90%的用户使用更高版本
+        <a target="_blank" title="下载Chrome" href="http://www.google.com/chrome/">Google Chrome</a>
+        或
+        <a target="_blank" href="http://www.microsoft.com/zh-cn/download/ie.aspx?q=internet+explorer">Internet Explorer</a>
+        体验到了更流畅更精彩的页面，你还不试试？
+    </p>
+</div>
+<![endif]-->
+
+<header class="header">
+    <nav class="navbar">
+        <div class="slogan">
+            <a href="/">Shmily</a>
+        </div>
+        <div class="menu">
+            <spam class="menu-icon" id="js-menu-toggle"></spam>
+            <ul class="menu-list">
+                
+                <li class="menu-item">
+                <a href="/home/">
+                <i class="fa "></i>
+                Home</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/posts/">
+                <i class="fa "></i>
+                Posts</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/about/">
+                <i class="fa "></i>
+                About Me</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header>
+
+    <section class="content">
+        <article>
+            <div class="markdown-body">
+  <h1>Generating CSS sprites with Gulp</h1>
+  <p class="meta">18 Sep 2015 - Meituan, Beijing</p>
+  <p>While working with one large project, we were thinking about how to automate building the CSS sprites. Before, we used to build them manually or with different online services which anyway took a lot of time. Also, by that time we already used Gulp to build the project and so were looking for a gulp-friendly solution for sprites.</p>
+
+<!--more-->
+
+<p>There’re  different variants:</p>
+
+<ul>
+  <li><a href="https://www.npmjs.org/package/css-sprite">css-sprite</a></li>
+  <li><a href="https://www.npmjs.com/package/gulp-sprite-generator">gulp-sprite-generator</a></li>
+  <li><a href="https://github.com/Otouto/gulp-spritesmith">gulp-spritesmith</a></li>
+  <li><a href="https://github.com/twolfson/gulp.spritesmith">gulp.spritesmith</a></li>
+</ul>
+
+<p>Eventually we chose <a href="https://github.com/twolfson/gulp.spritesmith">gulp.spritesmith</a> as an official port of it, because of few dependencies.</p>
+
+<h2 id="installlation">Installlation</h2>
+
+<p>The first think to do is to install Gulp. Its official <a href="https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md#getting-started">Docs</a> will help you a lot.
+Then install gulp.spritesmith. If your project is empty yet (as mine is), take supplement packages as well:</p>
+
+<blockquote>
+  <p>npm install gulp.spritesmith –save-dev</p>
+</blockquote>
+
+<p>Now you can move to tuning the generator.</p>
+
+<h2 id="tuning">Tuning</h2>
+
+<p>The simpliest task would look like the following:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">gulp</span><span class="p">.</span><span class="nx">task</span><span class="p">(</span><span class="s1">'sprite'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">spriteOutput</span> <span class="o">=</span>
+        <span class="nx">gulp</span><span class="p">.</span><span class="nx">src</span><span class="p">(</span><span class="s2">"static/img/icon/*.png"</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">sprite</span><span class="p">({</span>
+                <span class="na">imgName</span><span class="p">:</span> <span class="s2">"sprite.png"</span><span class="p">,</span>
+                <span class="na">cssName</span><span class="p">:</span> <span class="s2">"sprite.css"</span><span class="p">,</span>
+                <span class="na">imgPath</span><span class="p">:</span> <span class="s2">"/static/img/sprite.png"</span>
+            <span class="p">}));</span>
+
+    <span class="nx">spriteOutput</span><span class="p">.</span><span class="nx">css</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">gulp</span><span class="p">.</span><span class="nx">dest</span><span class="p">(</span><span class="s2">"static/css"</span><span class="p">));</span>
+    <span class="nx">spriteOutput</span><span class="p">.</span><span class="nx">img</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">gulp</span><span class="p">.</span><span class="nx">dest</span><span class="p">(</span><span class="s2">"static/img"</span><span class="p">));</span>
+<span class="p">});</span></code></pre></figure>
+
+<p>With that we can generate this sprite:</p>
+
+<p><img src="/static/img/sprite.png" alt="img" /></p>
+
+<p>It is served with the following CSS code:</p>
+
+<figure class="highlight"><pre><code class="language-css" data-lang="css"><span class="c">/*
+Icon classes can be used entirely standalone. They are named after their original file names.
+
+```html
+&lt;!-- `display: block` sprite --&gt;
+&lt;div class="icon-home"&gt;&lt;/div&gt;
+
+&lt;!-- `display: inline-block` sprite --&gt;
+&lt;img class="icon-home" /&gt;
+```
+*/</span>
+<span class="nc">.icon-article</span> <span class="p">{</span>
+  <span class="nl">background-image</span><span class="p">:</span> <span class="sx">url(/static/img/sprite.png)</span><span class="p">;</span>
+  <span class="nl">background-position</span><span class="p">:</span> <span class="m">-92px</span> <span class="m">0px</span><span class="p">;</span>
+  <span class="nl">width</span><span class="p">:</span> <span class="m">92px</span><span class="p">;</span>
+  <span class="nl">height</span><span class="p">:</span> <span class="m">92px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nc">.icon-briefcase</span> <span class="p">{</span>
+  <span class="nl">background-image</span><span class="p">:</span> <span class="sx">url(/static/img/sprite.png)</span><span class="p">;</span>
+  <span class="nl">background-position</span><span class="p">:</span> <span class="m">-276px</span> <span class="m">-92px</span><span class="p">;</span>
+  <span class="nl">width</span><span class="p">:</span> <span class="m">92px</span><span class="p">;</span>
+  <span class="nl">height</span><span class="p">:</span> <span class="m">92px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="o">...</span></code></pre></figure>
+
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+    <li class="text-ellipsis">
+      <span>09 Dec 2015</span> &raquo; <a href="/posts/router//">Router Middleware For Koa</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>25 Nov 2015</span> &raquo; <a href="/posts/localstorage//">Front-End Engineering：Cache Management</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>23 Nov 2015</span> &raquo; <a href="/posts/yahoo//">Best Practices For Speeding Up Your Web Site</a>
+    </li>
+    
+  </ul>
+</div>
+        </article>
+    </section>
+    <footer class="footer">
+    <div class="copyright">
+        <div class="contact">
+            <p>Copyright @YML</p>
+            <p>Geek of <a href="http://github.com/">GitHub</a></p>
+            <p>aworksmart@gmail.com</p>
+        </div>
+        <div class="contact">
+            <p><a href="http://weibo.com/ihaosir/">weibo.com/ihaosir</a></p>
+            <p><a href="http://github.com/free-birds/">github.com/free-birds</a></p>
+            <p><a href="http://childlike.me/">childlike.me</a></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script src="/static/js/libs/zepto.js"></script>
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/site.js"></script>
+</html>

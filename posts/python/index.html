@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title> Image Bat in Python - Shmily </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/imgs/favicon/favicon-32x32.png" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+</head>
+<body>
+    <!--[if lt IE 8]>
+<div>
+    <p>
+        已经有超过90%的用户使用更高版本
+        <a target="_blank" title="下载Chrome" href="http://www.google.com/chrome/">Google Chrome</a>
+        或
+        <a target="_blank" href="http://www.microsoft.com/zh-cn/download/ie.aspx?q=internet+explorer">Internet Explorer</a>
+        体验到了更流畅更精彩的页面，你还不试试？
+    </p>
+</div>
+<![endif]-->
+
+<header class="header">
+    <nav class="navbar">
+        <div class="slogan">
+            <a href="/">Shmily</a>
+        </div>
+        <div class="menu">
+            <spam class="menu-icon" id="js-menu-toggle"></spam>
+            <ul class="menu-list">
+                
+                <li class="menu-item">
+                <a href="/home/">
+                <i class="fa "></i>
+                Home</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/posts/">
+                <i class="fa "></i>
+                Posts</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/about/">
+                <i class="fa "></i>
+                About Me</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header>
+
+    <section class="content">
+        <article>
+            <div class="markdown-body">
+  <h1>Image Bat in Python</h1>
+  <p class="meta">16 Jun 2014 - Sysu, Guangzhou</p>
+  <p>1.批处理图片大小，需要PIL。
+输入宽度，高度自适应。</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="c"># -*- coding:utf-8 -*-</span>
+
+<span class="s">'''
+Arion ,2012-09-06
+必须安装PIL库
+
+批量修改文件中的图片为格式及大小
+'''</span>
+
+<span class="kn">import</span> <span class="nn">os</span><span class="p">,</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="nn">Image</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="nb">raw_input</span><span class="p">(</span><span class="s">"path:"</span><span class="p">)</span>
+<span class="n">width</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">raw_input</span><span class="p">(</span><span class="s">"the width U want:"</span><span class="p">))</span>
+<span class="n">imgslist</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s">'/*.*'</span><span class="p">)</span>
+<span class="n">format</span> <span class="o">=</span> <span class="nb">raw_input</span><span class="p">(</span><span class="s">"format:"</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">small_img</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">imgs</span> <span class="ow">in</span> <span class="n">imgslist</span><span class="p">:</span>
+        <span class="n">imgspath</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">imgs</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">imgs</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">height</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span> <span class="n">y</span> <span class="o">*</span> <span class="n">width</span> <span class="o">/</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">small_img</span> <span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="p">),</span><span class="n">Image</span><span class="o">.</span><span class="n">ANTIALIAS</span><span class="p">)</span>
+        <span class="n">small_img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">imgspath</span> <span class="o">+</span><span class="s">".thumbnail."</span><span class="o">+</span><span class="n">format</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">"done"</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">small_img</span><span class="p">()</span></code></pre></figure>
+
+<p>2.批处理重命名图片。</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="c">#!\usr\bin\env python</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># Author: PZX</span>
+<span class="c"># FileName: batchrename.py</span>
+<span class="c"># Function: 批量命名某一文件夹下的文件名</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">def</span> <span class="nf">UsePrompt</span><span class="p">():</span>
+    <span class="c">#如果省略path，则path为当前路径</span>
+    <span class="k">print</span> <span class="s">'Useage: batchrename.py [path] newfilenames'</span>
+    <span class="n">sys</span><span class="o">.</span><span class="nb">exit</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">BatchRename</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+    <span class="c">#设置路径</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">fileList</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s">"./"</span><span class="p">)</span>
+
+    <span class="n">dotIndex</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s">'.'</span><span class="p">)</span>
+    <span class="n">fileName</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">[</span> <span class="p">:</span> <span class="n">dotIndex</span><span class="p">]</span>
+    <span class="n">fileExt</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">[</span><span class="n">dotIndex</span> <span class="p">:</span> <span class="p">]</span>
+    <span class="n">genNum</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">fileItem</span> <span class="ow">in</span> <span class="n">fileList</span><span class="p">:</span>
+        <span class="n">fileFullName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s">' ('</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">genNum</span><span class="p">)</span> <span class="o">+</span> <span class="s">')'</span> <span class="o">+</span> <span class="n">fileExt</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">fileItem</span><span class="p">,</span> <span class="n">fileFullName</span><span class="p">)</span>
+        <span class="k">print</span> <span class="p">(</span><span class="n">fileItem</span> <span class="o">+</span> <span class="s">' =&gt; '</span> <span class="o">+</span> <span class="n">fileFullName</span><span class="p">)</span>
+        <span class="n">genNum</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">UsePrompt</span><span class="p">()</span>
+    <span class="n">confirm</span> <span class="o">=</span> <span class="nb">raw_input</span><span class="p">(</span><span class="s">'Confirm(y|n): '</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">confirm</span> <span class="o">==</span> <span class="s">'n'</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="nb">exit</span><span class="p">()</span>
+    <span class="n">BatchRename</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></code></pre></figure>
+
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+    <li class="text-ellipsis">
+      <span>09 Dec 2015</span> &raquo; <a href="/posts/router//">Router Middleware For Koa</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>25 Nov 2015</span> &raquo; <a href="/posts/localstorage//">Front-End Engineering：Cache Management</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>23 Nov 2015</span> &raquo; <a href="/posts/yahoo//">Best Practices For Speeding Up Your Web Site</a>
+    </li>
+    
+  </ul>
+</div>
+        </article>
+    </section>
+    <footer class="footer">
+    <div class="copyright">
+        <div class="contact">
+            <p>Copyright @YML</p>
+            <p>Geek of <a href="http://github.com/">GitHub</a></p>
+            <p>aworksmart@gmail.com</p>
+        </div>
+        <div class="contact">
+            <p><a href="http://weibo.com/ihaosir/">weibo.com/ihaosir</a></p>
+            <p><a href="http://github.com/free-birds/">github.com/free-birds</a></p>
+            <p><a href="http://childlike.me/">childlike.me</a></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script src="/static/js/libs/zepto.js"></script>
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/site.js"></script>
+</html>

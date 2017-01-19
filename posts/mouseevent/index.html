@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title> Capture Mouse Move Event - Shmily </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/imgs/favicon/favicon-32x32.png" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+</head>
+<body>
+    <!--[if lt IE 8]>
+<div>
+    <p>
+        已经有超过90%的用户使用更高版本
+        <a target="_blank" title="下载Chrome" href="http://www.google.com/chrome/">Google Chrome</a>
+        或
+        <a target="_blank" href="http://www.microsoft.com/zh-cn/download/ie.aspx?q=internet+explorer">Internet Explorer</a>
+        体验到了更流畅更精彩的页面，你还不试试？
+    </p>
+</div>
+<![endif]-->
+
+<header class="header">
+    <nav class="navbar">
+        <div class="slogan">
+            <a href="/">Shmily</a>
+        </div>
+        <div class="menu">
+            <spam class="menu-icon" id="js-menu-toggle"></spam>
+            <ul class="menu-list">
+                
+                <li class="menu-item">
+                <a href="/home/">
+                <i class="fa "></i>
+                Home</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/posts/">
+                <i class="fa "></i>
+                Posts</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/about/">
+                <i class="fa "></i>
+                About Me</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header>
+
+    <section class="content">
+        <article>
+            <div class="markdown-body">
+  <h1>Capture Mouse Move Event</h1>
+  <p class="meta">26 Feb 2014 - Sysu, Guangzhou</p>
+  <style type="text/css">
+	#screen {
+	    position: absolute;
+	    width: 100%;
+	    height: 100%;
+	    overflow: hidden;
+	    top: 0px;
+	    left: 0px;
+	}
+	#screen span {
+	    background: #0f0;
+	    position: absolute;
+	    font-size: 0;
+	    overflow: hidden;
+	    width: 2px;
+	    height: 2px;
+	}
+</style>
+<script>
+	var Follow = function(){
+		var $$ = function(id){ return document.getElementById(id); },
+			addEvent = function(o,e,f){
+				o.addEventListener ? o.addEventListener(e,f,false) : o.attachEvent('on'+e,function(){f.call(o)})
+			},
+			OBJ = [], sp, rs, N = 0, m;
+
+		var init = function(id,config){
+			this.config = config || {};
+			this.obj = $$(id);
+			sp = this.config.speed || 4;  // 移动速度
+			rs = this.config.animR || 1;  // 震荡幅度
+			m = {
+				x: $$(id).offsetWidth * 0.5,
+				y: $$(id).offsetHeight * 0.5
+			};
+			this.setXY();
+			this.start();
+		};
+		init.prototype = {
+			setXY: function(){
+				addEvent(this.obj,'mousemove',function(e){
+					e = e || window.event;
+					m.x = e.clientX;  // 获得鼠标在浏览器位置
+					m.y = e.clientY;
+				});
+			},
+			start: function(){
+				var OO, o, fn = this.config.fn;
+				// 创建鼠标位置中心点
+				OBJ[N++] = OO = new Cobj(null,0,0);
+				for( var i = 0; i < 360; i += 10 ){ // 每一圈的点数
+					var O = OO;
+					for( var j = 15; j < 25; j += 1 ){ // 圈数
+						var x = fn(i,j).x,
+							y = fn(i,j).y;
+						OBJ[N++] = o = new Cobj(O,x,y);
+						O = o;
+					}
+				}
+				setInterval(function(){
+					for( var i = 0; i < N; i++ ) OBJ[i].run();
+				}, 20);
+			}
+		};
+
+		var Cobj = function(parent,cx,cy){
+			var obj = document.createElement("span");
+			this.css = obj.style;
+			this.css.zIndex = 1000 - N;
+			$$("screen").appendChild(obj);
+			this.ddx = 0;
+			this.ddy = 0;
+			this.PX = 0;
+			this.PY = 0;
+			this.x = 0;
+			this.y = 0;
+			this.x0 = 0;
+			this.y0 = 0;
+			this.cx = cx;
+			this.cy = cy;
+			this.parent = parent;
+		};
+
+		Cobj.prototype = {
+			run: function(){
+				if(!this.parent){
+					this.x0 = m.x;
+					this.y0 = m.y;
+				}else{
+					this.x0 = this.parent.x;
+					this.y0 = this.parent.y;
+				}
+				this.x = this.PX += (this.ddx += ((this.x0 - this.PX - this.ddx) + this.cx) / rs) / sp;
+				this.y = this.PY += (this.ddy += ((this.y0 - this.PY - this.ddy) + this.cy) / rs) / sp;
+				this.css.left = Math.round(this.x) + 'px';
+				this.css.top = Math.round(this.y) + 'px';
+			}
+		};
+
+		return init;
+	}();
+</script>
+
+<strong>原文链接：</strong><a style="position:relative; z-index:1002;" href="http://www.cnblogs.com/hongru/archive/2011/01/26/1945661.html">[传送门]</a><br>
+<p>纯JavaScript实现，若想保证良好体验效果，请使用现代浏览器。</p>
+
+<br>
+面对JavaScript与数学的强大结合，我实在无力。<br>
+但是还是学习到了获得跟踪鼠标事件的方法。
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">setXY</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="nx">addEvent</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span><span class="s1">'mousemove'</span><span class="p">,</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">event</span><span class="p">;</span>
+        <span class="nx">obj</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span>  <span class="c1">// 获得鼠标在浏览器位置</span>
+        <span class="nx">obj</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
+    <span class="p">});</span>
+<span class="p">}</span></code></pre></figure>
+
+<div id="screen"></div>
+<script>
+	new Follow('screen',{
+		speed: 3,
+		animR: 2,
+		fn: function(i,j){
+			// 圆形坐标函数
+			return {
+				x: j / 4 * Math.cos(i),
+				y: j / 4 * Math.sin(i)
+			};
+		}
+	});
+</script>
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+    <li class="text-ellipsis">
+      <span>09 Dec 2015</span> &raquo; <a href="/posts/router//">Router Middleware For Koa</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>25 Nov 2015</span> &raquo; <a href="/posts/localstorage//">Front-End Engineering：Cache Management</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>23 Nov 2015</span> &raquo; <a href="/posts/yahoo//">Best Practices For Speeding Up Your Web Site</a>
+    </li>
+    
+  </ul>
+</div>
+        </article>
+    </section>
+    <footer class="footer">
+    <div class="copyright">
+        <div class="contact">
+            <p>Copyright @YML</p>
+            <p>Geek of <a href="http://github.com/">GitHub</a></p>
+            <p>aworksmart@gmail.com</p>
+        </div>
+        <div class="contact">
+            <p><a href="http://weibo.com/ihaosir/">weibo.com/ihaosir</a></p>
+            <p><a href="http://github.com/free-birds/">github.com/free-birds</a></p>
+            <p><a href="http://childlike.me/">childlike.me</a></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script src="/static/js/libs/zepto.js"></script>
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/site.js"></script>
+</html>

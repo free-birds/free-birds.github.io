@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title> Css Snippets - Shmily </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/imgs/favicon/favicon-32x32.png" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+</head>
+<body>
+    <!--[if lt IE 8]>
+<div>
+    <p>
+        已经有超过90%的用户使用更高版本
+        <a target="_blank" title="下载Chrome" href="http://www.google.com/chrome/">Google Chrome</a>
+        或
+        <a target="_blank" href="http://www.microsoft.com/zh-cn/download/ie.aspx?q=internet+explorer">Internet Explorer</a>
+        体验到了更流畅更精彩的页面，你还不试试？
+    </p>
+</div>
+<![endif]-->
+
+<header class="header">
+    <nav class="navbar">
+        <div class="slogan">
+            <a href="/">Shmily</a>
+        </div>
+        <div class="menu">
+            <spam class="menu-icon" id="js-menu-toggle"></spam>
+            <ul class="menu-list">
+                
+                <li class="menu-item">
+                <a href="/home/">
+                <i class="fa "></i>
+                Home</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/posts/">
+                <i class="fa "></i>
+                Posts</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/about/">
+                <i class="fa "></i>
+                About Me</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header>
+
+    <section class="content">
+        <article>
+            <div class="markdown-body">
+  <h1>Css Snippets</h1>
+  <p class="meta">22 Jan 2014 - Sysu, Guangzhou</p>
+  <ol>
+  <li>
+    <h2 id="div-centering">DIV Centering</h2>
+  </li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.father</span> <span class="p">{</span>
+    <span class="nl">margin</span><span class="p">:</span> <span class="m">0</span> <span class="nb">auto</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nc">.child</span> <span class="p">{</span>
+    <span class="nl">float</span><span class="p">:</span> <span class="nb">left</span><span class="p">;</span>      <span class="c">/* 元素浮动方向     */</span>
+    <span class="nl">display</span><span class="p">:</span> <span class="nb">inline</span><span class="p">;</span>  <span class="c">/* 作为内联元素显示 */</span>
+<span class="p">}</span></code></pre></figure>
+
+<ol>
+  <li>
+    <h2 id="background-opacity">Background Opacity</h2>
+  </li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.back</span> <span class="p">{</span>
+	<span class="nl">background-color</span><span class="p">:</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0.6</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<ol>
+  <li>
+    <h2 id="z-index">Z-index</h2>
+  </li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.tag</span> <span class="p">{</span>
+	<span class="nl">position</span><span class="p">:</span> <span class="nb">relative</span><span class="p">;</span>  <span class="c">/* 如果z-index失效,确保position为relative */</span>
+	<span class="nl">z-index</span><span class="p">:</span> <span class="m">1000</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<ol>
+  <li>
+    <h2 id="vertical-centering-about-msgbox">Vertical Centering about MsgBox</h2>
+  </li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">getTop</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">height</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">offsetHeight</span> <span class="o">-</span> <span class="nx">height</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">scrollTop</span> <span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<ol>
+  <li>
+    <h2 id="getstyle">GetStyle</h2>
+    <p>由于js只能修改html内部的css样式代码，获得CssDeclaration中样式的方法如下。</p>
+  </li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getStyle</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//'currentStyle' only for ie5.0+</span>
+    <span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">currentStyle</span> <span class="p">?</span>
+        <span class="nx">o</span><span class="p">.</span><span class="nx">currentStyle</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">:</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">defaultView</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span><span class="kc">null</span><span class="p">)[</span><span class="nx">key</span><span class="p">];</span>
+<span class="p">}</span></code></pre></figure>
+
+<ol>
+  <li>
+    <h2 id="img-vertical-centering">IMG Vertical Centering</h2>
+  </li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">"display:table-cell;vertical-align:middle;"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;img</span> <span class="na">style=</span><span class="s">""</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+
+<ol>
+  <li>
+    <h2 id="better-helvetica">Better Helvetica</h2>
+  </li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-css" data-lang="css"><span class="nt">body</span> <span class="p">{</span>
+   <span class="nl">font-family</span><span class="p">:</span> <span class="s1">"HelveticaNeue-Light"</span><span class="p">,</span> <span class="s1">"Helvetica Neue Light"</span><span class="p">,</span> <span class="s1">"Helvetica Neue"</span><span class="p">,</span> <span class="n">Helvetica</span><span class="p">,</span> <span class="n">Arial</span><span class="p">,</span> <span class="s1">"Lucida Grande"</span><span class="p">,</span> <span class="nb">sans-serif</span><span class="p">;</span>
+   <span class="nl">font-weight</span><span class="p">:</span> <span class="m">300</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+    <li class="text-ellipsis">
+      <span>09 Dec 2015</span> &raquo; <a href="/posts/router//">Router Middleware For Koa</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>25 Nov 2015</span> &raquo; <a href="/posts/localstorage//">Front-End Engineering：Cache Management</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>23 Nov 2015</span> &raquo; <a href="/posts/yahoo//">Best Practices For Speeding Up Your Web Site</a>
+    </li>
+    
+  </ul>
+</div>
+        </article>
+    </section>
+    <footer class="footer">
+    <div class="copyright">
+        <div class="contact">
+            <p>Copyright @YML</p>
+            <p>Geek of <a href="http://github.com/">GitHub</a></p>
+            <p>aworksmart@gmail.com</p>
+        </div>
+        <div class="contact">
+            <p><a href="http://weibo.com/ihaosir/">weibo.com/ihaosir</a></p>
+            <p><a href="http://github.com/free-birds/">github.com/free-birds</a></p>
+            <p><a href="http://childlike.me/">childlike.me</a></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script src="/static/js/libs/zepto.js"></script>
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/site.js"></script>
+</html>

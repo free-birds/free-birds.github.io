@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title> Flappy Bird is flying - Shmily </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/imgs/favicon/favicon-32x32.png" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+</head>
+<body>
+    <!--[if lt IE 8]>
+<div>
+    <p>
+        已经有超过90%的用户使用更高版本
+        <a target="_blank" title="下载Chrome" href="http://www.google.com/chrome/">Google Chrome</a>
+        或
+        <a target="_blank" href="http://www.microsoft.com/zh-cn/download/ie.aspx?q=internet+explorer">Internet Explorer</a>
+        体验到了更流畅更精彩的页面，你还不试试？
+    </p>
+</div>
+<![endif]-->
+
+<header class="header">
+    <nav class="navbar">
+        <div class="slogan">
+            <a href="/">Shmily</a>
+        </div>
+        <div class="menu">
+            <spam class="menu-icon" id="js-menu-toggle"></spam>
+            <ul class="menu-list">
+                
+                <li class="menu-item">
+                <a href="/home/">
+                <i class="fa "></i>
+                Home</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/posts/">
+                <i class="fa "></i>
+                Posts</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/about/">
+                <i class="fa "></i>
+                About Me</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header>
+
+    <section class="content">
+        <article>
+            <div class="markdown-body">
+  <h1>Flappy Bird is flying</h1>
+  <p class="meta">19 Feb 2014 - Sysu, Guangzhou</p>
+  <style type="text/css">
+	#bird td{ width:5px !important; height:5px !important; }
+</style>
+
+<div id="post"></div>
+
+<script>
+	var bird_up = [
+		[0,0,0,0,0, 0,1,1,1,1, 1,1,0,0,0, 0,0],
+		[0,0,0,0,1, 1,5,5,5,1, 5,5,1,0,0, 0,0],
+
+		[0,0,0,1,5, 5,2,2,1,5, 5,5,5,1,0, 0,0],
+		[0,1,1,1,1, 2,2,2,1,5, 5,5,1,5,1, 0,0],
+		[1,5,5,5,5, 1,2,2,1,5, 5,5,1,5,1, 0,0],
+		[1,5,5,5,5, 5,1,2,2,1, 5,5,5,5,1, 0,0],
+		[1,2,5,5,5, 2,1,2,2,2, 1,1,1,1,1, 1,0],
+
+		[0,1,2,2,2, 1,2,2,2,1, 4,4,4,4,4, 4,1],
+		[0,0,1,1,1, 3,3,3,1,4, 1,1,1,1,1, 1,0],
+		[0,0,1,3,3, 3,3,3,3,1, 4,4,4,4,4, 1,0],
+		[0,0,0,1,1, 3,3,3,3,3, 1,1,1,1,1, 0,0],
+		[0,0,0,0,0, 1,1,1,1,1, 0,0,0,0,0, 0,0]
+	];
+	var bird_down = [
+		[0,0,0,0,0, 0,1,1,1,1, 1,1,0,0,0, 0,0],
+		[0,0,0,0,1, 1,5,5,5,1, 5,5,1,0,0, 0,0],
+
+		[0,0,0,1,5, 5,2,2,1,5, 5,5,5,1,0, 0,0],
+		[0,0,1,5,2, 2,2,2,1,5, 5,5,1,5,1, 0,0],
+		[0,1,5,2,2, 2,2,2,1,5, 5,5,1,5,1, 0,0],
+		[0,1,5,2,2, 2,2,2,2,1, 5,5,5,5,1, 0,0],
+		[0,1,1,1,1, 1,2,2,2,2, 1,1,1,1,1, 1,0],
+
+		[1,2,2,2,2, 2,1,2,2,1, 4,4,4,4,4, 4,1],
+		[1,2,5,5,5, 1,3,3,1,4, 1,1,1,1,1, 1,0],
+		[1,5,5,5,1, 3,3,3,3,1, 4,4,4,4,4, 1,0],
+		[0,1,1,1,3, 3,3,3,3,3, 1,1,1,1,1, 0,0],
+		[0,0,0,0,1, 1,1,1,1,1, 0,0,0,0,0, 0,0]
+	];
+	var bird = bird_up;
+	var post = document.getElementById('post');
+
+	var flyTimer = setInterval(function(){
+		if( bird === bird_up ) bird = bird_down;
+		else bird = bird_up;
+		var tmp = document.getElementById('bird');
+		if( tmp ) post.removeChild(tmp);
+		var table = document.createElement("table");
+		table.id = "bird";
+		var tbody = document.createElement("tbody");
+		table.cellPadding = 0;
+		table.cellSpacing = 0;
+		table.appendChild(tbody);
+		for (var i = 0; i < 12; i++) {
+			var tr = document.createElement("tr");
+			for (var j = 0; j < 17; j++) {
+				var td = document.createElement("td");
+				// 绘制背景地图
+				var color = "";
+				switch(bird[i][j]){
+					case 1: color = "#000"; break;
+					case 2: color = "#fcf521"; break;
+					case 3: color = "#fbbb11"; break;
+					case 4: color = "#ff664c"; break;
+					case 5: color = "#fff"; break;
+					default: break;
+				}
+				td.style.backgroundColor = color;
+				tr.appendChild(td);
+			}
+			tbody.appendChild(tr);
+		}
+		post.appendChild(table);
+	},1000);
+</script>
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+    <li class="text-ellipsis">
+      <span>09 Dec 2015</span> &raquo; <a href="/posts/router//">Router Middleware For Koa</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>25 Nov 2015</span> &raquo; <a href="/posts/localstorage//">Front-End Engineering：Cache Management</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>23 Nov 2015</span> &raquo; <a href="/posts/yahoo//">Best Practices For Speeding Up Your Web Site</a>
+    </li>
+    
+  </ul>
+</div>
+        </article>
+    </section>
+    <footer class="footer">
+    <div class="copyright">
+        <div class="contact">
+            <p>Copyright @YML</p>
+            <p>Geek of <a href="http://github.com/">GitHub</a></p>
+            <p>aworksmart@gmail.com</p>
+        </div>
+        <div class="contact">
+            <p><a href="http://weibo.com/ihaosir/">weibo.com/ihaosir</a></p>
+            <p><a href="http://github.com/free-birds/">github.com/free-birds</a></p>
+            <p><a href="http://childlike.me/">childlike.me</a></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script src="/static/js/libs/zepto.js"></script>
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/site.js"></script>
+</html>

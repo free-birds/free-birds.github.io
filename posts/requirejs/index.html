@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title> Requirejs Practicing - Shmily </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/imgs/favicon/favicon-32x32.png" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+</head>
+<body>
+    <!--[if lt IE 8]>
+<div>
+    <p>
+        已经有超过90%的用户使用更高版本
+        <a target="_blank" title="下载Chrome" href="http://www.google.com/chrome/">Google Chrome</a>
+        或
+        <a target="_blank" href="http://www.microsoft.com/zh-cn/download/ie.aspx?q=internet+explorer">Internet Explorer</a>
+        体验到了更流畅更精彩的页面，你还不试试？
+    </p>
+</div>
+<![endif]-->
+
+<header class="header">
+    <nav class="navbar">
+        <div class="slogan">
+            <a href="/">Shmily</a>
+        </div>
+        <div class="menu">
+            <spam class="menu-icon" id="js-menu-toggle"></spam>
+            <ul class="menu-list">
+                
+                <li class="menu-item">
+                <a href="/home/">
+                <i class="fa "></i>
+                Home</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/posts/">
+                <i class="fa "></i>
+                Posts</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/about/">
+                <i class="fa "></i>
+                About Me</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header>
+
+    <section class="content">
+        <article>
+            <div class="markdown-body">
+  <h1>Requirejs Practicing</h1>
+  <p class="meta">28 Sep 2015 - Meituan, Beijing</p>
+  <p>There’s a requirement to rebulid the front end pages of <a href="http://party178.com/">website</a>. For better organization, i choosed <a href="http://jekyllrb.com/docs/home/">jekyll</a> to be a generator, the same as my site.</p>
+
+<!--more-->
+
+<p>Which module loader can be used, <a href="http://seajs.org/docs/">seajs</a> or <a href="http://www.requirejs.org/">requirejs</a>? Because of the same standard(AMD) with truckjs of MEITUAN and better realizing, i prefer to use requirejs.</p>
+
+<h2 id="dependencies">Dependencies</h2>
+
+<ul>
+  <li><a href="http://jekyllrb.com/docs/home/">jekyll</a></li>
+  <li><a href="http://www.requirejs.org/">requirejs</a></li>
+  <li><a href="http://zeptojs.com/">zeptojs</a></li>
+</ul>
+
+<p>The first think to do is to install jekyll.</p>
+
+<blockquote>
+  <p>gem install jekyll</p>
+</blockquote>
+
+<p>Now you can start the server of jekyll.</p>
+
+<blockquote>
+  <p>jekyll server</p>
+</blockquote>
+
+<h2 id="usage">Usage</h2>
+
+<p>To take full advantage of the optimization tool, it is suggested that you keep all inline script out of the HTML, and only reference require.js with a requirejs call like so to load your script:</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="c">&lt;!-- data-main attribute tells require.js to load
+             scripts/main.js after require.js loads. --&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">data-main=</span><span class="s">"scripts/main"</span> <span class="na">src=</span><span class="s">"scripts/require.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span></code></pre></figure>
+
+<p>Inside of page.js, you can use requirejs() to load any other scripts you need to run. This ensures a single entry point, since the data-main script you specify is loaded asynchronously.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">require</span><span class="p">([</span><span class="s1">'zepto'</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//This function is called when zepto is loaded.</span>
+<span class="p">});</span></code></pre></figure>
+
+<p><strong>shim:</strong> Configure the dependencies, exports, and custom initialization for older, traditional “browser globals” scripts that do not use define() to declare the dependencies and set a module value.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">require</span><span class="p">.</span><span class="nx">config</span><span class="p">({</span>
+    <span class="na">baseUrl</span><span class="p">:</span> <span class="s1">'/static/js'</span><span class="p">,</span>
+    <span class="na">paths</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">zepto</span><span class="p">:</span> <span class="s1">'lib/zepto'</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="na">shim</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">zepto</span><span class="p">:</span> <span class="p">{</span> <span class="na">exports</span><span class="p">:</span> <span class="s1">'$'</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span></code></pre></figure>
+
+<p><strong>NOTICE:</strong> paths’ value without ‘.js’ !!!</p>
+
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+    <li class="text-ellipsis">
+      <span>09 Dec 2015</span> &raquo; <a href="/posts/router//">Router Middleware For Koa</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>25 Nov 2015</span> &raquo; <a href="/posts/localstorage//">Front-End Engineering：Cache Management</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>23 Nov 2015</span> &raquo; <a href="/posts/yahoo//">Best Practices For Speeding Up Your Web Site</a>
+    </li>
+    
+  </ul>
+</div>
+        </article>
+    </section>
+    <footer class="footer">
+    <div class="copyright">
+        <div class="contact">
+            <p>Copyright @YML</p>
+            <p>Geek of <a href="http://github.com/">GitHub</a></p>
+            <p>aworksmart@gmail.com</p>
+        </div>
+        <div class="contact">
+            <p><a href="http://weibo.com/ihaosir/">weibo.com/ihaosir</a></p>
+            <p><a href="http://github.com/free-birds/">github.com/free-birds</a></p>
+            <p><a href="http://childlike.me/">childlike.me</a></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script src="/static/js/libs/zepto.js"></script>
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/site.js"></script>
+</html>

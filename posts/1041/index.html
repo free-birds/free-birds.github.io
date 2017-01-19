@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title> 1041 Pushing Boxes - Shmily </title>
+    <meta name="generator" content="Jekyll" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/imgs/favicon/favicon-32x32.png" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+</head>
+<body>
+    <!--[if lt IE 8]>
+<div>
+    <p>
+        已经有超过90%的用户使用更高版本
+        <a target="_blank" title="下载Chrome" href="http://www.google.com/chrome/">Google Chrome</a>
+        或
+        <a target="_blank" href="http://www.microsoft.com/zh-cn/download/ie.aspx?q=internet+explorer">Internet Explorer</a>
+        体验到了更流畅更精彩的页面，你还不试试？
+    </p>
+</div>
+<![endif]-->
+
+<header class="header">
+    <nav class="navbar">
+        <div class="slogan">
+            <a href="/">Shmily</a>
+        </div>
+        <div class="menu">
+            <spam class="menu-icon" id="js-menu-toggle"></spam>
+            <ul class="menu-list">
+                
+                <li class="menu-item">
+                <a href="/home/">
+                <i class="fa "></i>
+                Home</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/posts/">
+                <i class="fa "></i>
+                Posts</a>
+                </li>
+                
+                <li class="menu-item">
+                <a href="/about/">
+                <i class="fa "></i>
+                About Me</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header>
+
+    <section class="content">
+        <article>
+            <div class="markdown-body">
+  <h1>1041 Pushing Boxes</h1>
+  <p class="meta">01 Dec 2013 - Sysu, Guangzhou</p>
+  <p><strong>题目大意</strong>：</p>
+
+<p>一个矩形房间里面有若干箱子。</p>
+
+<p>每次操作是把房间的其中一面墙往里移动，把箱子推到新的位置，问最后所有箱子的位置。</p>
+
+<p><strong>解题思路</strong>：</p>
+
+<p>分上下左右四种情况分别考虑，按照题目描述模拟。</p>
+
+<p>以下墙上移（move_up）为例：</p>
+
+<p>1.首先沿列方向，计算每一列最大箱子数nb。用边界减去nb得到实际可以移动最大步长actual_step</p>
+
+<p>2.在移动前，判断预期移动步长与实际步长，取小值。题目假定当箱子前已有箱子并靠墙则不再移动。</p>
+
+<p>3.记录最大可能移动的位置。对箱子进行排序，较墙远则排序较前。</p>
+
+<p>a)如果无箱子在一列，则移动到预期位置;</p>
+
+<p>b)如果有箱子在同一列先移动较墙远的一个箱子，之后的箱子位置逐个靠墙。</p>
+
+<figure class="highlight"><pre><code class="language-c" data-lang="c"><span class="c1">// 1041.Pushing Boxes
+// 每次推动最大次数 &lt;= 总长度-箱子数
+// 题目默认推动箱子时，推动路线上如果已被箱子顶住，则不继续推动
+</span>
+<span class="cp">#include &lt;algorithm&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string&gt;
+</span>
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="n">Box</span><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">Box</span> <span class="n">box</span><span class="p">[</span><span class="mi">11</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">row</span><span class="p">,</span><span class="n">column</span><span class="p">,</span><span class="n">num</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">maxRowStep</span><span class="p">();</span>               <span class="c1">// 沿行方向，最多可以移动多少步
+</span><span class="kt">int</span> <span class="n">maxColumnStep</span><span class="p">();</span>            <span class="c1">// 沿列方向，最多可以移动多少步
+</span>
+<span class="n">bool</span> <span class="n">comp_up</span><span class="p">(</span> <span class="k">const</span> <span class="n">Box</span><span class="o">&amp;</span> <span class="n">b1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Box</span><span class="o">&amp;</span> <span class="n">b2</span> <span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">b1</span><span class="p">.</span><span class="n">y</span> <span class="o">!=</span> <span class="n">b2</span><span class="p">.</span><span class="n">y</span> <span class="p">)</span> <span class="k">return</span> <span class="n">b1</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">b2</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="k">else</span> <span class="k">return</span> <span class="n">b1</span><span class="p">.</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">b2</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">bool</span> <span class="n">comp_down</span><span class="p">(</span> <span class="k">const</span> <span class="n">Box</span><span class="o">&amp;</span> <span class="n">b1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Box</span><span class="o">&amp;</span> <span class="n">b2</span> <span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">b1</span><span class="p">.</span><span class="n">y</span> <span class="o">!=</span> <span class="n">b2</span><span class="p">.</span><span class="n">y</span> <span class="p">)</span> <span class="k">return</span> <span class="n">b1</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">b2</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="k">else</span> <span class="k">return</span> <span class="n">b1</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">b2</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">bool</span> <span class="n">comp_left</span><span class="p">(</span> <span class="k">const</span> <span class="n">Box</span><span class="o">&amp;</span> <span class="n">b1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Box</span><span class="o">&amp;</span> <span class="n">b2</span> <span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">b1</span><span class="p">.</span><span class="n">x</span> <span class="o">!=</span> <span class="n">b2</span><span class="p">.</span><span class="n">x</span> <span class="p">)</span> <span class="k">return</span> <span class="n">b1</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">b2</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+    <span class="k">else</span> <span class="k">return</span> <span class="n">b1</span><span class="p">.</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">b2</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">bool</span> <span class="n">comp_right</span><span class="p">(</span> <span class="k">const</span> <span class="n">Box</span><span class="o">&amp;</span> <span class="n">b1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Box</span><span class="o">&amp;</span> <span class="n">b2</span> <span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">b1</span><span class="p">.</span><span class="n">x</span> <span class="o">!=</span> <span class="n">b2</span><span class="p">.</span><span class="n">x</span> <span class="p">)</span> <span class="k">return</span> <span class="n">b1</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">b2</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+    <span class="k">else</span> <span class="k">return</span> <span class="n">b1</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">b2</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">move_up</span><span class="p">(</span> <span class="kt">int</span> <span class="n">step</span> <span class="p">);</span>
+<span class="kt">void</span> <span class="n">move_down</span><span class="p">(</span> <span class="kt">int</span> <span class="n">step</span> <span class="p">);</span>
+<span class="kt">void</span> <span class="n">move_right</span><span class="p">(</span> <span class="kt">int</span> <span class="n">step</span> <span class="p">);</span>
+<span class="kt">void</span> <span class="n">move_left</span><span class="p">(</span> <span class="kt">int</span> <span class="n">step</span> <span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//freopen("D:\\input.txt","r",stdin);
+</span>    <span class="kt">int</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">step</span><span class="p">,</span><span class="n">cnt</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">op</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
+
+    <span class="k">while</span><span class="p">(</span> <span class="n">scanf</span><span class="p">(</span><span class="s">"%d%d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">row</span><span class="p">,</span><span class="o">&amp;</span><span class="n">column</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">row</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">){</span>
+
+        <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">num</span><span class="p">);</span>
+        <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">){</span>
+            <span class="n">Box</span> <span class="n">b</span><span class="p">;</span>
+            <span class="n">scanf</span><span class="p">(</span><span class="s">"%d%d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">b</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="o">&amp;</span><span class="n">b</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+            <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="n">scanf</span><span class="p">(</span><span class="s">"%s"</span><span class="p">,</span><span class="n">op</span><span class="p">);</span>
+        <span class="n">string</span> <span class="n">str</span> <span class="o">=</span> <span class="n">op</span><span class="p">;</span>
+
+        <span class="k">while</span><span class="p">(</span> <span class="n">str</span> <span class="o">!=</span> <span class="s">"done"</span> <span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span> <span class="n">str</span> <span class="o">==</span> <span class="s">"up"</span> <span class="p">){</span>
+                <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">step</span><span class="p">);</span>
+                <span class="n">move_up</span><span class="p">(</span><span class="n">step</span><span class="p">);</span>
+            <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">str</span> <span class="o">==</span> <span class="s">"down"</span> <span class="p">){</span>
+                <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">step</span><span class="p">);</span>
+                <span class="n">move_down</span><span class="p">(</span><span class="n">step</span><span class="p">);</span>
+            <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">str</span> <span class="o">==</span> <span class="s">"right"</span> <span class="p">){</span>
+                <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">step</span><span class="p">);</span>
+                <span class="n">move_right</span><span class="p">(</span><span class="n">step</span><span class="p">);</span>
+            <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">str</span> <span class="o">==</span> <span class="s">"left"</span> <span class="p">){</span>
+                <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">step</span><span class="p">);</span>
+                <span class="n">move_left</span><span class="p">(</span><span class="n">step</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="n">scanf</span><span class="p">(</span><span class="s">"%s"</span><span class="p">,</span><span class="n">op</span><span class="p">);</span>
+            <span class="n">str</span> <span class="o">=</span> <span class="n">op</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="n">sort</span><span class="p">(</span> <span class="n">box</span><span class="p">,</span><span class="n">box</span><span class="o">+</span><span class="n">num</span><span class="p">,</span><span class="n">comp_right</span> <span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"Data set %d ends with boxes at locations "</span><span class="p">,</span><span class="n">cnt</span><span class="o">++</span><span class="p">);</span>
+        <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">){</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"(%d,%d) "</span><span class="p">,</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"(%d,%d).</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">box</span><span class="p">[</span><span class="n">num</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">[</span><span class="n">num</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="n">y</span> <span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 沿行方向，最多可以移动多少步
+</span><span class="kt">int</span> <span class="n">maxRowStep</span><span class="p">(){</span>
+    <span class="kt">int</span> <span class="n">maxs</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="c1">// 遍历每一行得到同行中箱子个数最大值
+</span>    <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">row</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">){</span>
+        <span class="kt">int</span> <span class="n">nb</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span> <span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span> <span class="n">box</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">x</span> <span class="o">==</span> <span class="n">i</span> <span class="p">)</span>
+                <span class="n">nb</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">nb</span> <span class="o">&gt;</span> <span class="n">maxs</span> <span class="p">)</span> <span class="n">maxs</span> <span class="o">=</span> <span class="n">nb</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">column</span> <span class="o">-</span> <span class="n">maxs</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 沿列方向，最多可以移动多少步
+</span><span class="kt">int</span> <span class="n">maxColumnStep</span><span class="p">(){</span>
+    <span class="kt">int</span> <span class="n">maxs</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="c1">// 遍历每一列得到同行中箱子个数最大值
+</span>    <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">column</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">){</span>
+        <span class="kt">int</span> <span class="n">nb</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span> <span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span> <span class="n">box</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">y</span> <span class="o">==</span> <span class="n">i</span> <span class="p">)</span>
+                <span class="n">nb</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">nb</span> <span class="o">&gt;</span> <span class="n">maxs</span> <span class="p">)</span> <span class="n">maxs</span> <span class="o">=</span> <span class="n">nb</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">row</span> <span class="o">-</span> <span class="n">maxs</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">move_up</span><span class="p">(</span> <span class="kt">int</span> <span class="n">step</span> <span class="p">){</span>
+
+    <span class="c1">// 取期望步长与实际步长的较小值
+</span>    <span class="c1">// 若实际步长较小则移动，若实际步长较小则只可以移动实际步数
+</span>    <span class="kt">int</span> <span class="n">actual_step</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span> <span class="n">maxColumnStep</span><span class="p">(),</span> <span class="n">step</span> <span class="p">);</span>
+    <span class="n">sort</span><span class="p">(</span><span class="n">box</span><span class="p">,</span><span class="n">box</span><span class="o">+</span><span class="n">num</span><span class="p">,</span><span class="n">comp_up</span><span class="p">);</span>
+
+    <span class="kt">int</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>   <span class="c1">// y = -1 代表第一列，之前没有列与之一列
+</span>    <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">!=</span> <span class="n">y</span> <span class="p">){</span>    <span class="c1">// 若 当前列 与 之前列 不为一列，则记录实际移动最大处
+</span>            <span class="n">x</span> <span class="o">=</span> <span class="n">row</span> <span class="o">-</span> <span class="n">actual_step</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>                  <span class="c1">// 若为一列 则记录前一个箱子位置的更靠墙的一个位置
+</span>            <span class="n">x</span><span class="o">--</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span><span class="p">(</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">x</span> <span class="p">)</span>      <span class="c1">// 移动箱子
+</span>            <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">move_down</span><span class="p">(</span> <span class="kt">int</span> <span class="n">step</span> <span class="p">){</span>
+
+    <span class="kt">int</span> <span class="n">actual_step</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span> <span class="n">maxColumnStep</span><span class="p">(),</span> <span class="n">step</span> <span class="p">);</span>
+    <span class="n">sort</span><span class="p">(</span><span class="n">box</span><span class="p">,</span><span class="n">box</span><span class="o">+</span><span class="n">num</span><span class="p">,</span><span class="n">comp_down</span><span class="p">);</span>
+
+    <span class="kt">int</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">!=</span> <span class="n">y</span> <span class="p">){</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">actual_step</span><span class="p">;</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="n">x</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span><span class="p">(</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="p">)</span>
+            <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">move_left</span><span class="p">(</span> <span class="kt">int</span> <span class="n">step</span> <span class="p">){</span>
+
+    <span class="kt">int</span> <span class="n">actual_step</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span> <span class="n">maxRowStep</span><span class="p">(),</span> <span class="n">step</span> <span class="p">);</span>
+    <span class="n">sort</span><span class="p">(</span><span class="n">box</span><span class="p">,</span><span class="n">box</span><span class="o">+</span><span class="n">num</span><span class="p">,</span><span class="n">comp_left</span><span class="p">);</span>
+
+    <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">y</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">!=</span> <span class="n">x</span> <span class="p">){</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">column</span> <span class="o">-</span> <span class="n">actual_step</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="n">y</span><span class="o">--</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span><span class="p">(</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">y</span> <span class="p">)</span>
+            <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">move_right</span><span class="p">(</span> <span class="kt">int</span> <span class="n">step</span> <span class="p">){</span>
+
+    <span class="kt">int</span> <span class="n">actual_step</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span> <span class="n">maxRowStep</span><span class="p">(),</span> <span class="n">step</span> <span class="p">);</span>
+    <span class="n">sort</span><span class="p">(</span><span class="n">box</span><span class="p">,</span><span class="n">box</span><span class="o">+</span><span class="n">num</span><span class="p">,</span><span class="n">comp_right</span><span class="p">);</span>
+
+    <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">y</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">!=</span> <span class="n">x</span> <span class="p">){</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">actual_step</span><span class="p">;</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="n">y</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span><span class="p">(</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">y</span> <span class="p">)</span>
+            <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+    <li class="text-ellipsis">
+      <span>09 Dec 2015</span> &raquo; <a href="/posts/router//">Router Middleware For Koa</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>25 Nov 2015</span> &raquo; <a href="/posts/localstorage//">Front-End Engineering：Cache Management</a>
+    </li>
+    
+    <li class="text-ellipsis">
+      <span>23 Nov 2015</span> &raquo; <a href="/posts/yahoo//">Best Practices For Speeding Up Your Web Site</a>
+    </li>
+    
+  </ul>
+</div>
+        </article>
+    </section>
+    <footer class="footer">
+    <div class="copyright">
+        <div class="contact">
+            <p>Copyright @YML</p>
+            <p>Geek of <a href="http://github.com/">GitHub</a></p>
+            <p>aworksmart@gmail.com</p>
+        </div>
+        <div class="contact">
+            <p><a href="http://weibo.com/ihaosir/">weibo.com/ihaosir</a></p>
+            <p><a href="http://github.com/free-birds/">github.com/free-birds</a></p>
+            <p><a href="http://childlike.me/">childlike.me</a></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script src="/static/js/libs/zepto.js"></script>
+    <script src="/static/js/plugin.js"></script>
+    <script src="/static/js/site.js"></script>
+</html>
