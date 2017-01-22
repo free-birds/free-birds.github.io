@@ -1,0 +1,38 @@
+# Site settings
+port: 80
+title: origin
+subTitle: As free as a bird
+email: hiorigin@gmail.com
+description: "As free as a bird."
+
+baseurl: "/" # the subpath of your site, e.g. /blog/
+#url: "" # the base hostname & protocol for your site
+
+gems: [jekyll-paginate]
+gem: 'pygments.rb'
+
+# Build settings
+encoding:    utf-8
+permalink:   /posts/:title/
+highlighter: pygments
+highlighter: rouge
+markdown: kramdown
+kramdown:
+  input: GFM
+
+paginate: 7
+paginate_path: '/posts/:num'
+excerpt_separator: "\n\n\n"
+
+#Other Global Configuration
+exclude: ['README.md']
+
+excerpt_separator: <!--more-->
+
+#show the jumbotron header on index page
+# show_blog_header: false
+
+author:
+  name: hiorigin
+  email: hiorigin@gmail.com
+  web: hiorigin.me
