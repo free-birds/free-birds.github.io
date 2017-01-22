@@ -1,8 +1,8 @@
-// var $menuToggle = $('#js-menu-toggle'),
-//     $menuParent = $menuToggle.parents('.menu'),
-//     $document = $(document),
-//     $window = $(window),
-//     $body = $('body');
+var $menuToggle = $('#js-menu-toggle'),
+    $menuParent = $menuToggle.parents('.menu'),
+    $document = $(document),
+    $window = $(window),
+    $body = $('body');
 
 function setEvent() {
     $menuToggle.on('click', function () {
@@ -77,21 +77,4 @@ function init() {
     loadImage();
 }
 
-// init();
-
-(function () {
-   function Page() {
-       this.toggleMenu = $('#js-menu-toggle');
-       // var $menuToggle = $('#js-menu-toggle'),
-       //     $menuParent = $menuToggle.parents('.menu'),
-       //     $document = $(document),
-       //     $window = $(window),
-       //     $body = $('body');
-   }
-
-    Page.prototype.init = function () {
-       console.log(this.toggleMenu);
-   };
-
-    window.Page = Page;
-}());
+init();
