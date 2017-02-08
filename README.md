@@ -6,9 +6,6 @@ Uses:
 * Twitter Bootstrap 3.2.0
 * Font Awesome 4.2.0
 
-
-Here is a <a href="http://itsrifat.github.io/rifyll/" target="_blank">Demo</a>
-
 To get started:
 * Fork this repo
 * Edit [_config.yml](_config.yml):
