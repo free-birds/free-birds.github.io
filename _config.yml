@@ -2,7 +2,7 @@
 port: 80
 title: Hi Origin
 subTitle: As free as a bird
-email: hiorigin@gmail.com
+email: aworksmart@gmail.com
 description: "As free as a bird."
 
 baseurl: "/" # the subpath of your site, e.g. /blog/
@@ -34,5 +34,5 @@ excerpt_separator: <!--more-->
 
 author:
   name: hiorigin
-  email: hiorigin@gmail.com
+  email: aworksmart@gmail.com
   web: hiorigin.me
